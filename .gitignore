@@ -6,7 +6,8 @@ out/
 *.war
 *.ear
 
-*.class
 # idea related stuff
+.idea/workspace.xml
+.idea/misc.xml
+.idea/uiDesigner.xml
 .gitm*
-.idea/*
