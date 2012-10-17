@@ -1,13 +1,12 @@
 *.class
+out/
 
 # Package Files #
 *.jar
 *.war
 *.ear
-out/
+
 *.class
 # idea related stuff
-.idea/workspace.xml
-.idea/misc.xml
-.idea/uiDesigner.xml
 .gitm*
+.idea/*
