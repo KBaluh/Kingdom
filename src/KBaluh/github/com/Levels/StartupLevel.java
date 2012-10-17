@@ -135,9 +135,6 @@ public class StartupLevel extends Level {
     }
 
     private void checkEntitiesBulletCollision() {
-        Entity entityMobToRemove = null;
-        Entity entityBulletToRemove = null;
-
         List<Entity> removeEntity = new ArrayList<Entity>();
 
         Iterator<Entity> iterator = entities.iterator();
@@ -157,7 +154,7 @@ public class StartupLevel extends Level {
                                 bullet.hit();
                                 removeEntity.add(bullet);
                                 if (!mob.isLive()) {
-                                    if (entityMobToRemove instanceof Player == false) {
+                                    if (mob instanceof Player == false) {
                                         removeEntity.add(mob);
                                     }
                                 }
