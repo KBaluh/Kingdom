@@ -1,13 +1,13 @@
 package KBaluh.github.com.Levels;
 
 import KBaluh.github.com.Entity.Bullets.Bullet;
-import KBaluh.github.com.Entity.Decorations.Bubble;
-import KBaluh.github.com.Entity.Decorations.BubbleType;
-import KBaluh.github.com.Entity.Direction;
 import KBaluh.github.com.Entity.Entity;
-import KBaluh.github.com.Entity.Mobs.HunterFish;
 import KBaluh.github.com.Entity.Mobs.Mob;
 import KBaluh.github.com.Entity.Mobs.Player;
+import KBaluh.github.com.Entity.Spawners.BubbleSpawner;
+import KBaluh.github.com.Entity.Spawners.HunterFishSpawner;
+import KBaluh.github.com.Entity.Spawners.Spawner;
+import KBaluh.github.com.Entity.Spawners.SupportItemSpawner;
 import KBaluh.github.com.GameScreen;
 
 import javax.swing.*;
@@ -15,7 +15,6 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * User: KBaluh
@@ -28,6 +27,8 @@ public class StartupLevel extends Level {
     private List<Entity> entities = new ArrayList<Entity>();
     private Player player;
 
+    private List<Spawner> spawners = new ArrayList<Spawner>();
+
     private int maxFishSkips = 10;
     private int fishSkips = 0;
 
@@ -39,8 +40,9 @@ public class StartupLevel extends Level {
         player = new Player(this, playerX, playerY);
         addEntity(player);
 
-        Thread spawnerTheard = new Thread(this);
-        spawnerTheard.start();
+        spawners.add(new BubbleSpawner(this));
+        spawners.add(new HunterFishSpawner(this));
+        spawners.add(new SupportItemSpawner(this));
     }
 
     public void addEntity(Entity entity) {
@@ -83,50 +85,18 @@ public class StartupLevel extends Level {
             System.exit(1);
         }
 
+        player.tick();
+
+        for (Spawner spawner : spawners) {
+            spawner.tick();
+        }
+
         for (Entity entity : entities) {
             entity.tick();
         }
-        player.tick();
 
         checkEntitiesBulletCollision();
         checkEntitiesPosition();
-    }
-
-    @Override
-    public void run() {
-        while (true) {
-            Random random = new Random();
-            try {
-                Thread.sleep(random.nextInt(3000));
-                addBubble();
-                addHunterFish();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void addBubble() {
-        Random random = new Random();
-        int bubbleSpeed = random.nextInt(3) + 1;
-        BubbleType bubbleType;
-        if (bubbleSpeed == 1) {
-            bubbleType = BubbleType.Small;
-        } else
-        if (bubbleSpeed == 2) {
-            bubbleType = BubbleType.Middle;
-        } else {
-            bubbleType = BubbleType.Big;
-        }
-        addEntity(new Bubble(random.nextInt(800), random.nextInt(600), bubbleSpeed, bubbleType));
-    }
-
-    private void addHunterFish() {
-        Random random = new Random();
-        int y = random.nextInt(600);
-        int x = gameScreen.getWidth() + 10;
-        Entity entity = new HunterFish(this, x, y, Direction.LEFT);
-        addEntity(entity);
     }
 
     private void checkEntitiesBulletCollision() {
