@@ -26,8 +26,11 @@ public class Explosion extends Entity {
     public Explosion(Level level, IExplosion expolosionEntity, int x, int y) {
         this.expolosionEntity = expolosionEntity;
         this.level = level;
-        setX(x);
-        setY(y);
+
+        int offsetX = 0;
+        int offsetY = -60;
+        setX(x + offsetX);
+        setY(y + offsetY);
 
         ticks = expolosionEntity.getInterval();
     }
