@@ -1,19 +1,19 @@
 package KBaluh.github.com.Levels;
 
-import KBaluh.github.com.Entity.*;
+import KBaluh.github.com.Entity.Bullets.Bullet;
 import KBaluh.github.com.Entity.Decorations.Bubble;
 import KBaluh.github.com.Entity.Decorations.BubbleType;
+import KBaluh.github.com.Entity.Direction;
+import KBaluh.github.com.Entity.Entity;
 import KBaluh.github.com.Entity.Mobs.HunterFish;
 import KBaluh.github.com.Entity.Mobs.Mob;
 import KBaluh.github.com.Entity.Mobs.Player;
 import KBaluh.github.com.GameScreen;
-import KBaluh.github.com.Entity.Bullets.Bullet;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -26,10 +26,6 @@ public class StartupLevel extends Level {
     private Image background = new ImageIcon("res/background.jpg").getImage();
 
     private List<Entity> entities = new ArrayList<Entity>();
-    private Thread spawnerTheard = new Thread(this);
-
-    private int playerX = 300;
-    private int playerY = 200;
     private Player player;
 
     private int maxFishSkips = 10;
@@ -38,9 +34,12 @@ public class StartupLevel extends Level {
     public StartupLevel(GameScreen gameScreen) {
         super(gameScreen);
 
+        int playerX = 300;
+        int playerY = 200;
         player = new Player(this, playerX, playerY);
         addEntity(player);
 
+        Thread spawnerTheard = new Thread(this);
         spawnerTheard.start();
     }
 
@@ -65,9 +64,7 @@ public class StartupLevel extends Level {
     @Override
     public void paint(Graphics g) {
         g.drawImage(background, 0, 0, null);
-        Iterator<Entity> iterator = entities.iterator();
-        while (iterator.hasNext()) {
-            Entity entity = iterator.next();
+        for (Entity entity : entities) {
             Image image = entity.getImage();
             g.drawImage(image, entity.getX(), entity.getY(), null);
         }
@@ -86,9 +83,7 @@ public class StartupLevel extends Level {
             System.exit(1);
         }
 
-        Iterator<Entity> iterator = entities.iterator();
-        while (iterator.hasNext()) {
-            Entity entity = iterator.next();
+        for (Entity entity : entities) {
             entity.tick();
         }
         player.tick();
@@ -123,7 +118,7 @@ public class StartupLevel extends Level {
         } else {
             bubbleType = BubbleType.Big;
         }
-        entities.add(new Bubble(random.nextInt(800), random.nextInt(600), bubbleSpeed, bubbleType));
+        addEntity(new Bubble(random.nextInt(800), random.nextInt(600), bubbleSpeed, bubbleType));
     }
 
     private void addHunterFish() {
@@ -131,21 +126,17 @@ public class StartupLevel extends Level {
         int y = random.nextInt(600);
         int x = gameScreen.getWidth() + 10;
         Entity entity = new HunterFish(this, x, y, Direction.LEFT);
-        entities.add(entity);
+        addEntity(entity);
     }
 
     private void checkEntitiesBulletCollision() {
         List<Entity> removeEntity = new ArrayList<Entity>();
 
-        Iterator<Entity> iterator = entities.iterator();
-        while (iterator.hasNext()) {
-            Entity entity = iterator.next();
+        for (Entity entity : entities) {
             if (entity instanceof Bullet) {
                 Bullet bullet = (Bullet) entity;
 
-                Iterator<Entity> mobIterator = entities.iterator();
-                while (mobIterator.hasNext()) {
-                    Entity entityMob = mobIterator.next();
+                for (Entity entityMob : entities) {
                     if (entityMob instanceof Mob) {
                         Mob mob = (Mob) entityMob;
                         if (mob.getTeam() != bullet.getTeam()) {
@@ -154,7 +145,7 @@ public class StartupLevel extends Level {
                                 bullet.hit();
                                 removeEntity.add(bullet);
                                 if (!mob.isLive()) {
-                                    if (mob instanceof Player == false) {
+                                    if (!(mob instanceof Player)) {
                                         removeEntity.add(mob);
                                     }
                                 }
@@ -175,25 +166,22 @@ public class StartupLevel extends Level {
     private void checkEntitiesPosition() {
         List<Entity> removeList = new ArrayList<Entity>();
 
-        Iterator<Entity> iterator = entities.iterator();
-        while (iterator.hasNext()) {
-            Entity entity = iterator.next();
+        for (Entity entity : entities) {
             if (entity != null) {
-                int top = - 10;
+                int top = -10;
                 int bottom = getScreenHeight() + 10;
                 int left = -10;
                 int right = getScreenWidth() + 10;
 
                 if (entity.getY() >= bottom || entity.getY() <= top) {
-                    if (entity instanceof Player == false) {
+                    if (!(entity instanceof Player)) {
                         if (entity instanceof Mob) {
                             fishSkips++;
                         }
                         removeList.add(entity);
                     }
-                } else
-                if (entity.getX() <= left || entity.getX() >= right) {
-                    if (entity instanceof Player == false) {
+                } else if (entity.getX() <= left || entity.getX() >= right) {
+                    if (!(entity instanceof Player)) {
                         if (entity instanceof Mob) {
                             fishSkips++;
                         }
@@ -210,12 +198,6 @@ public class StartupLevel extends Level {
     }
 
     private boolean isGame() {
-        if (!player.isLive()) {
-            return false;
-        }
-        if (fishSkips >= maxFishSkips) {
-            return false;
-        }
-        return true;
+        return (player.isLive() && (fishSkips <= maxFishSkips));
     }
 }
