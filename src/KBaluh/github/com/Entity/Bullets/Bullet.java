@@ -43,6 +43,10 @@ public abstract class Bullet extends Entity {
         isHit = true;
     }
 
+    public boolean isHis() {
+        return isHit;
+    }
+
     public float getDamage() {
         if (isHit) {
             return 0;
@@ -51,6 +55,9 @@ public abstract class Bullet extends Entity {
     }
 
     public void tick() {
+        if (isHit) {
+            return;
+        }
         if (tickCount == 0) {
             if (dir == Direction.LEFT) {
                 dx += -speed;

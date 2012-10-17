@@ -1,6 +1,9 @@
 package KBaluh.github.com.Levels;
 
 import KBaluh.github.com.Entity.Bullets.Bullet;
+import KBaluh.github.com.Entity.Bullets.Explosion;
+import KBaluh.github.com.Entity.Bullets.IExplosion;
+import KBaluh.github.com.Entity.Bullets.RocketBullet;
 import KBaluh.github.com.Entity.Entity;
 import KBaluh.github.com.Entity.Mobs.Mob;
 import KBaluh.github.com.Entity.Mobs.Player;
@@ -27,6 +30,7 @@ public class StartupLevel extends Level {
     private Image background = new ImageIcon("res/background.jpg").getImage();
 
     private List<Entity> entities = new ArrayList<Entity>();
+    private List<Entity> entitiesToRemove = new ArrayList<Entity>();
     private Player player;
 
     private List<Spawner> spawners = new ArrayList<Spawner>();
@@ -55,6 +59,10 @@ public class StartupLevel extends Level {
         entities.remove(entity);
     }
 
+    public void needRemoveEntity(Entity entity) {
+        entitiesToRemove.add(entity);
+    }
+
     @Override
     public void onKeyDown(KeyEvent e) {
         player.onKeyDown(e);
@@ -70,7 +78,9 @@ public class StartupLevel extends Level {
         g.drawImage(background, 0, 0, null);
         for (Entity entity : entities) {
             Image image = entity.getImage();
-            g.drawImage(image, entity.getX(), entity.getY(), null);
+            if (image != null) {
+                g.drawImage(image, entity.getX(), entity.getY(), null);
+            }
         }
         g.drawImage(player.getImage(), player.getX(), player.getY(), null);
 
@@ -82,6 +92,12 @@ public class StartupLevel extends Level {
 
     @Override
     public void tick() {
+
+        for (Entity removeEntity : entitiesToRemove) {
+            entities.remove(removeEntity);
+        }
+        entitiesToRemove.clear();
+
         if (!isGame()) {
             JOptionPane.showMessageDialog(null, "You lose!");
             System.exit(1);
@@ -120,6 +136,7 @@ public class StartupLevel extends Level {
     }
 
     private void checkEntitiesBulletCollision() {
+        List<Entity> needAddEntity = new ArrayList<Entity>();
         List<Entity> removeEntity = new ArrayList<Entity>();
 
         for (Entity entity : entities) {
@@ -133,7 +150,14 @@ public class StartupLevel extends Level {
                             if (mob.haveCollision(bullet)) {
                                 mob.hurt(bullet.getDamage());
                                 bullet.hit();
-                                removeEntity.add(bullet);
+                                if (bullet instanceof IExplosion) {
+                                    needAddEntity.add(new Explosion(this,
+                                            (IExplosion) bullet,
+                                            bullet.getX(),
+                                            bullet.getY()));
+                                } else {
+                                    removeEntity.add(bullet);
+                                }
                                 if (!mob.isLive()) {
                                     if (!(mob instanceof Player)) {
                                         removeEntity.add(mob);
@@ -151,6 +175,10 @@ public class StartupLevel extends Level {
             removeEntity(entity);
         }
         removeEntity.clear();
+
+        for (Entity entity : needAddEntity) {
+            addEntity(entity);
+        }
     }
 
     private void checkEntitiesPosition() {
