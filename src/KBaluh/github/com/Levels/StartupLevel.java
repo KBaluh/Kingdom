@@ -138,6 +138,8 @@ public class StartupLevel extends Level {
         Entity entityMobToRemove = null;
         Entity entityBulletToRemove = null;
 
+        List<Entity> removeEntity = new ArrayList<Entity>();
+
         Iterator<Entity> iterator = entities.iterator();
         while (iterator.hasNext()) {
             Entity entity = iterator.next();
@@ -153,31 +155,29 @@ public class StartupLevel extends Level {
                             if (mob.haveCollision(bullet)) {
                                 mob.hurt(bullet.getDamage());
                                 bullet.hit();
-                                entityBulletToRemove = bullet;
+                                removeEntity.add(bullet);
                                 if (!mob.isLive()) {
-                                    entityMobToRemove = mob;
+                                    if (entityMobToRemove instanceof Player == false) {
+                                        removeEntity.add(mob);
+                                    }
                                 }
                                 break;
                             }
                         }
                     }
                 }
-
-                if (entityMobToRemove != null) {
-                    if (entityMobToRemove instanceof Player == false) {
-                        removeEntity(entityMobToRemove);
-                    }
-                }
-
-                if (entityBulletToRemove != null) {
-                    removeEntity(entityBulletToRemove);
-                    break;
-                }
             }
         }
+
+        for (Entity entity : removeEntity) {
+            removeEntity(entity);
+        }
+        removeEntity.clear();
     }
 
     private void checkEntitiesPosition() {
+        List<Entity> removeList = new ArrayList<Entity>();
+
         Iterator<Entity> iterator = entities.iterator();
         while (iterator.hasNext()) {
             Entity entity = iterator.next();
@@ -192,7 +192,7 @@ public class StartupLevel extends Level {
                         if (entity instanceof Mob) {
                             fishSkips++;
                         }
-                        iterator.remove();
+                        removeList.add(entity);
                     }
                 } else
                 if (entity.getX() <= left || entity.getX() >= right) {
@@ -200,11 +200,16 @@ public class StartupLevel extends Level {
                         if (entity instanceof Mob) {
                             fishSkips++;
                         }
-                        iterator.remove();
+                        removeList.add(entity);
                     }
                 }
             }
         }
+
+        for (Entity entity : removeList) {
+            removeEntity(entity);
+        }
+        removeList.clear();
     }
 
     private boolean isGame() {
