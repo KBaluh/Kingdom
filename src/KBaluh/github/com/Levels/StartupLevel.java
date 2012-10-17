@@ -76,13 +76,13 @@ public class StartupLevel extends Level {
         g.setColor(Color.YELLOW);
         g.drawString("Entities: " + entities.size() +
                 ", Player life: " + player.getHp() +
-                ", Fish skips: " + fishSkips, 10, 15);
+                ", Fish skips: " + fishSkips + "/" + maxFishSkips, 10, 15);
     }
 
     @Override
     public void tick() {
-        if (!player.isLive()) {
-            JOptionPane.showMessageDialog(null, "Вы проиграли!!!");
+        if (!isGame()) {
+            JOptionPane.showMessageDialog(null, "You lose!");
             System.exit(1);
         }
 
@@ -189,15 +189,31 @@ public class StartupLevel extends Level {
 
                 if (entity.getY() >= bottom || entity.getY() <= top) {
                     if (entity instanceof Player == false) {
+                        if (entity instanceof Mob) {
+                            fishSkips++;
+                        }
                         iterator.remove();
                     }
                 } else
                 if (entity.getX() <= left || entity.getX() >= right) {
                     if (entity instanceof Player == false) {
+                        if (entity instanceof Mob) {
+                            fishSkips++;
+                        }
                         iterator.remove();
                     }
                 }
             }
         }
+    }
+
+    private boolean isGame() {
+        if (!player.isLive()) {
+            return false;
+        }
+        if (fishSkips >= maxFishSkips) {
+            return false;
+        }
+        return true;
     }
 }
