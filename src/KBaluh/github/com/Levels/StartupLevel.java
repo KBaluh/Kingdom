@@ -32,6 +32,9 @@ public class StartupLevel extends Level {
     private int playerY = 200;
     private Player player;
 
+    private int maxFishSkips = 10;
+    private int fishSkips = 0;
+
     public StartupLevel(GameScreen gameScreen) {
         super(gameScreen);
 
@@ -68,11 +71,12 @@ public class StartupLevel extends Level {
             Image image = entity.getImage();
             g.drawImage(image, entity.getX(), entity.getY(), null);
         }
+        g.drawImage(player.getImage(), player.getX(), player.getY(), null);
+
         g.setColor(Color.YELLOW);
         g.drawString("Entities: " + entities.size() +
-                ", Жизни игрока: " + player.getHp(), 10, 15);
-
-        g.drawImage(player.getImage(), player.getX(), player.getY(), null);
+                ", Player life: " + player.getHp() +
+                ", Fish skips: " + fishSkips, 10, 15);
     }
 
     @Override
