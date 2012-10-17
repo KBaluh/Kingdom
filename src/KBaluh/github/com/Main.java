@@ -9,8 +9,8 @@ import javax.swing.*;
 public class Main {
 
     public static String GAME_TITLE = "Kingdom";
-    public static int GAME_WIDTH = 800;
-    public static int GAME_HEIGHT = 600;
+    public static int GAME_WIDTH = 1024;
+    public static int GAME_HEIGHT = 768;
 
     public static void main(String[] args) {
         JFrame frame = new JFrame();
