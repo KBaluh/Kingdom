@@ -15,8 +15,10 @@ public class MedicineChest extends SupportItem {
 
     private static int speed = 3;
 
+    private static int bonus = 75;
+
     public MedicineChest(Level level, int x, int y) {
-        super(level, x, y, speed);
+        super(level, x, y, speed, bonus);
     }
 
     public Image getImage() {

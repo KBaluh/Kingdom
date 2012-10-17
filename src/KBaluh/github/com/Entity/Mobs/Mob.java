@@ -2,6 +2,7 @@ package KBaluh.github.com.Entity.Mobs;
 
 import KBaluh.github.com.Entity.Direction;
 import KBaluh.github.com.Entity.Entity;
+import KBaluh.github.com.Entity.SupportItems.IBonusReceiver;
 import KBaluh.github.com.Entity.Team;
 import KBaluh.github.com.Levels.Level;
 import KBaluh.github.com.Weapons.Weapon;
@@ -13,7 +14,7 @@ import java.awt.event.KeyEvent;
  * Author: KBaluh
  * Date: 16.10.12:19:29
  */
-public abstract class Mob extends Entity {
+public abstract class Mob extends Entity implements IBonusReceiver {
 
     public Level level;
     protected int dx;
@@ -90,6 +91,12 @@ public abstract class Mob extends Entity {
         } else
         if (dir == Direction.RIGHT) {
             setX(getX() + speed);
+        }
+    }
+
+    public void increaseHp(float hp) {
+        if (isLive()) {
+            this.hp += hp;
         }
     }
 

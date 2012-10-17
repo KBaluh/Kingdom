@@ -1,6 +1,7 @@
 package KBaluh.github.com.Entity.Mobs;
 
 import KBaluh.github.com.Entity.Direction;
+import KBaluh.github.com.Entity.SupportItems.IBonusReceiver;
 import KBaluh.github.com.Entity.Team;
 import KBaluh.github.com.Levels.Level;
 import KBaluh.github.com.Weapons.RocketGun;

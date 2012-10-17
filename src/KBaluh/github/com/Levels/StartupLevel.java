@@ -8,6 +8,8 @@ import KBaluh.github.com.Entity.Spawners.BubbleSpawner;
 import KBaluh.github.com.Entity.Spawners.HunterFishSpawner;
 import KBaluh.github.com.Entity.Spawners.Spawner;
 import KBaluh.github.com.Entity.Spawners.SupportItemSpawner;
+import KBaluh.github.com.Entity.SupportItems.IBonusReceiver;
+import KBaluh.github.com.Entity.SupportItems.MedicineChest;
 import KBaluh.github.com.GameScreen;
 
 import javax.swing.*;
@@ -95,8 +97,26 @@ public class StartupLevel extends Level {
             entity.tick();
         }
 
+        checkEntitiesSupportItemCollision();
         checkEntitiesBulletCollision();
         checkEntitiesPosition();
+    }
+
+    private void checkEntitiesSupportItemCollision() {
+        List<Entity> itemsRemove = new ArrayList<Entity>();
+        for (Entity bonusEntity : entities) {
+            if (bonusEntity instanceof MedicineChest) {
+                if (bonusEntity.haveCollision(player)) {
+                    player.increaseHp(((MedicineChest) bonusEntity).getBonus());
+                    itemsRemove.add(bonusEntity);
+                    break;
+                }
+            }
+        }
+        for (Entity entity : itemsRemove) {
+            removeEntity(entity);
+        }
+        itemsRemove.clear();
     }
 
     private void checkEntitiesBulletCollision() {

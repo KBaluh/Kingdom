@@ -14,9 +14,13 @@ public abstract class SupportItem extends Entity {
     protected Level level;
     private int speed;
 
-    public SupportItem(Level level, int x, int y, int speed) {
+    private boolean bonusReceived = false;
+    private int bonus;
+
+    public SupportItem(Level level, int x, int y, int speed, int bonus) {
         this.level = level;
         this.speed = speed;
+        this.bonus = bonus;
         setX(x);
         setY(y);
     }
@@ -29,5 +33,12 @@ public abstract class SupportItem extends Entity {
     }
 
     public void onKeyUp(KeyEvent e) {
+    }
+
+    public int getBonus() {
+        if (bonusReceived) {
+            return 0;
+        }
+        return bonus;
     }
 }
