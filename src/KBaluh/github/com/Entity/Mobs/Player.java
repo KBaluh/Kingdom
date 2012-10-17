@@ -1,7 +1,6 @@
 package KBaluh.github.com.Entity.Mobs;
 
 import KBaluh.github.com.Entity.Direction;
-import KBaluh.github.com.Entity.SupportItems.IBonusReceiver;
 import KBaluh.github.com.Entity.Team;
 import KBaluh.github.com.Levels.Level;
 import KBaluh.github.com.Weapons.RocketGun;
@@ -50,7 +49,15 @@ public class Player extends Mob {
                 dy = 0;
                 break;
 
+            case KeyEvent.VK_UP :
+                dy = 0;
+                break;
+
             case KeyEvent.VK_S :
+                dy = 0;
+                break;
+
+            case KeyEvent.VK_DOWN:
                 dy = 0;
                 break;
 
@@ -58,7 +65,15 @@ public class Player extends Mob {
                 dx = 0;
                 break;
 
+            case KeyEvent.VK_RIGHT:
+                dx = 0;
+                break;
+
             case KeyEvent.VK_A :
+                dx = 0;
+                break;
+
+            case KeyEvent.VK_LEFT :
                 dx = 0;
                 break;
         }
@@ -77,7 +92,23 @@ public class Player extends Mob {
                 }
                 break;
 
+            case KeyEvent.VK_UP :
+                dy = -speed;
+
+                if (getY() <= 0) {
+                    setY(10);
+                }
+                break;
+
             case KeyEvent.VK_S :
+                dy = speed;
+
+                if (getY() >= level.gameScreen.getHeight() - image.getHeight(null)) {
+                    setY(level.gameScreen.getHeight() - image.getHeight(null) - 10);
+                }
+                break;
+
+            case KeyEvent.VK_DOWN :
                 dy = speed;
 
                 if (getY() >= level.gameScreen.getHeight() - image.getHeight(null)) {
@@ -95,7 +126,27 @@ public class Player extends Mob {
                 }
                 break;
 
+            case KeyEvent.VK_RIGHT :
+                dx = speed;
+                image = imageRight;
+                setDir(Direction.RIGHT);
+
+                if (getX() + image.getWidth(null) >= level.gameScreen.getWidth()) {
+                    setX(level.gameScreen.getWidth() - image.getWidth(null) - 10);
+                }
+                break;
+
             case KeyEvent.VK_A :
+                dx = -speed;
+                image = imageLeft;
+                setDir(Direction.LEFT);
+
+                if (getX() <= 0) {
+                    setX(10);
+                }
+                break;
+
+            case KeyEvent.VK_LEFT :
                 dx = -speed;
                 image = imageLeft;
                 setDir(Direction.LEFT);
