@@ -18,7 +18,11 @@ public class RocketGun extends Weapon {
     public void useWeapon() {
         if (canShoot) {
             canShoot = false;
-            RocketBullet bullet = new RocketBullet(mob.getX(), mob.getY(), mob.getDir(), mob.getTeam());
+            int offsetX = 65;
+            int offsetY = 55;
+            RocketBullet bullet = new RocketBullet(mob.getX() + offsetX,
+                    mob.getY() + offsetY,
+                    mob.getDir(), mob.getTeam());
             mob.level.addEntity(bullet);
         }
     }
