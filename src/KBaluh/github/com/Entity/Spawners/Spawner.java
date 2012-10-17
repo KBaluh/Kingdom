@@ -28,8 +28,7 @@ public abstract class Spawner extends Entity {
 
     public void generateSpawnInterval(int start, int finish) {
         Random random = new Random();
-        int interval = start + random.nextInt(finish);
-        spawnInterval = interval;
+        spawnInterval = start + random.nextInt(finish);
     }
 
     public void tick() {

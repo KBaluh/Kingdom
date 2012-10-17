@@ -3,7 +3,6 @@ package KBaluh.github.com.Entity.Spawners;
 import KBaluh.github.com.Entity.Direction;
 import KBaluh.github.com.Entity.Entity;
 import KBaluh.github.com.Entity.Mobs.HunterFish;
-import KBaluh.github.com.Entity.Mobs.Mob;
 import KBaluh.github.com.Levels.Level;
 
 import java.util.Random;
@@ -14,7 +13,7 @@ import java.util.Random;
  */
 public class HunterFishSpawner extends Spawner {
 
-    private static int spawnInterval = 95;
+    private static int spawnInterval = 80;
 
     public HunterFishSpawner(Level level) {
         super(level, 0, 0, spawnInterval);
@@ -24,11 +23,10 @@ public class HunterFishSpawner extends Spawner {
         Random random = new Random();
         int y = Math.abs(random.nextInt(level.getScreenHeight() - 100));
         int x = level.getScreenWidth() + 10;
-        Entity entity = new HunterFish(level, x, y, Direction.LEFT);
-        return entity;
+        return new HunterFish(level, x, y, Direction.LEFT);
     }
 
     public void afterSpawn() {
-        generateSpawnInterval(spawnInterval, 50);
+        generateSpawnInterval(spawnInterval, 40);
     }
 }

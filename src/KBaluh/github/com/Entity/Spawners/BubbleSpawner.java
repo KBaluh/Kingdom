@@ -31,10 +31,9 @@ public class BubbleSpawner extends Spawner {
         } else {
             bubbleType = BubbleType.Big;
         }
-        Bubble bubble = new Bubble(random.nextInt(level.getScreenWidth()),
+        return new Bubble(random.nextInt(level.getScreenWidth()),
                 level.getScreenHeight(),
                 bubbleSpeed, bubbleType);
-        return bubble;
     }
 
     public void afterSpawn() {
