@@ -65,6 +65,8 @@ public class Player extends Mob {
 
     public void onKeyDown(KeyEvent e) {
         int keyCode = e.getKeyCode();
+        int ctrl = 17;
+
         switch (keyCode) {
             case KeyEvent.VK_W :
                 dy = -speed;
@@ -105,6 +107,10 @@ public class Player extends Mob {
             case KeyEvent.VK_SPACE:
                 weapon.useWeapon();
                 break;
+        }
+
+        if (keyCode == ctrl) {
+            weapon.useWeapon();
         }
     }
 }
