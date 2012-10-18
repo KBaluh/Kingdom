@@ -20,6 +20,7 @@ public class Bubble extends Entity {
     private int x;
     private int y;
     private int speed;
+    private int dy;
 
     public Bubble(int x, int y, int speed, BubbleType type) {
         this.x = x;
@@ -36,6 +37,7 @@ public class Bubble extends Entity {
     }
 
     public void tick() {
+        speed += dy;
         y -= speed;
     }
 
@@ -49,6 +51,10 @@ public class Bubble extends Entity {
 
     public int getY() {
         return y;
+    }
+
+    public void setDy(int dy) {
+        this.dy = dy;
     }
 
     public void onKeyUp(KeyEvent e) {
