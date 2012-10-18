@@ -18,8 +18,6 @@ public class Explosion extends Entity {
     private int ticks = 0;
     private int currentTick = 0;
 
-    private boolean isDone = false;
-
     public Explosion(IExplosion expolosionEntity, int x, int y) {
         this.expolosionEntity = expolosionEntity;
 
@@ -32,19 +30,14 @@ public class Explosion extends Entity {
     }
 
     public void tick() {
-        if (isDone) {
-            return;
-        }
-
         if (currentTick >= ticks) {
             if (currentFrame < expolosionEntity.getFrames()) {
                 image = expolosionEntity.getImageByFrame(currentFrame);
                 currentFrame++;
                 currentTick = 0;
             } else {
-                isDone = true;
-                level.needRemoveEntity(this);
-                level.needRemoveEntity((Entity) expolosionEntity);
+                level.removeEntity((Entity) expolosionEntity);
+                level.removeEntity(this);
             }
         } else {
             currentTick++;
@@ -52,9 +45,6 @@ public class Explosion extends Entity {
     }
 
     public Image getImage() {
-        if (isDone) {
-            return null;
-        }
         return image;
     }
 

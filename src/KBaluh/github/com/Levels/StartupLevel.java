@@ -28,7 +28,6 @@ public class StartupLevel extends Level {
     private Image background = new ImageIcon("res/background.jpg").getImage();
 
     private List<Entity> entities = new ArrayList<Entity>();
-    private List<Entity> entitiesToRemove = new ArrayList<Entity>();
     private Player player;
 
     private List<Spawner> spawners = new ArrayList<Spawner>();
@@ -55,11 +54,7 @@ public class StartupLevel extends Level {
     }
 
     public void removeEntity(Entity entity) {
-        entities.remove(entity);
-    }
-
-    public void needRemoveEntity(Entity entity) {
-        entitiesToRemove.add(entity);
+        entity.remove();
     }
 
     @Override
@@ -91,30 +86,48 @@ public class StartupLevel extends Level {
 
     @Override
     public void tick() {
-
-        for (Entity removeEntity : entitiesToRemove) {
-            entities.remove(removeEntity);
-        }
-        entitiesToRemove.clear();
-
         if (!isGame()) {
             JOptionPane.showMessageDialog(null, "You lose!");
             System.exit(1);
         }
 
+        for (int s = 0; s < spawners.size(); ++s) {
+            Spawner spawner = spawners.get(s);
+            if (spawner != null) {
+                spawner.tick();
+            } else {
+                spawners.remove(s);
+            }
+        }
+
+        for (int i = 0; i < entities.size(); ++i) {
+            Entity entity = entities.get(i);
+            if (entity != null) {
+                if (!entity.isRemoved())
+                {
+                    entity.tick();
+                }
+            } else {
+                entities.remove(i);
+            }
+        }
         player.tick();
-
-        for (Spawner spawner : spawners) {
-            spawner.tick();
-        }
-
-        for (Entity entity : entities) {
-            entity.tick();
-        }
 
         checkEntitiesSupportItemCollision();
         checkEntitiesBulletCollision();
         checkEntitiesPosition();
+
+        for (int i = 0; i < entities.size(); ++i) {
+            Entity entity = entities.get(i);
+            if (entity == null) {
+                entities.remove(i);
+                continue;
+            }
+
+            if (entity.isRemoved()) {
+                entities.remove(i);
+            }
+        }
     }
 
     public boolean canMove(int x, int y, int width, int height) {
@@ -123,31 +136,38 @@ public class StartupLevel extends Level {
     }
 
     private void checkEntitiesSupportItemCollision() {
-        List<Entity> itemsRemove = new ArrayList<Entity>();
-        for (Entity bonusEntity : entities) {
+        for (int i = 0; i < entities.size(); ++i) {
+            Entity bonusEntity = entities.get(i);
+            if (bonusEntity == null) {
+                continue;
+            }
+
             if (bonusEntity instanceof MedicineChest) {
                 if (bonusEntity.haveCollision(player)) {
                     player.increaseHp(((MedicineChest) bonusEntity).getBonus());
-                    itemsRemove.add(bonusEntity);
+                    removeEntity(bonusEntity);
                     break;
                 }
             }
         }
-        for (Entity entity : itemsRemove) {
-            removeEntity(entity);
-        }
-        itemsRemove.clear();
     }
 
     private void checkEntitiesBulletCollision() {
-        List<Entity> needAddEntity = new ArrayList<Entity>();
-        List<Entity> removeEntity = new ArrayList<Entity>();
+        for (int i = 0; i < entities.size(); ++i) {
+            Entity entity = entities.get(i);
+            if (entity == null) {
+                continue;
+            }
 
-        for (Entity entity : entities) {
             if (entity instanceof Bullet) {
                 Bullet bullet = (Bullet) entity;
 
-                for (Entity entityMob : entities) {
+                for (int j = 0; j < entities.size(); j++) {
+                    Entity entityMob = entities.get(j);
+                    if (entityMob == null) {
+                        continue;
+                    }
+
                     if (entityMob instanceof Mob) {
                         Mob mob = (Mob) entityMob;
                         if (mob.getTeam() != bullet.getTeam()) {
@@ -155,15 +175,15 @@ public class StartupLevel extends Level {
                                 mob.hurt(bullet.getDamage());
                                 bullet.hit();
                                 if (bullet instanceof IExplosion) {
-                                    needAddEntity.add(new Explosion((IExplosion) bullet,
+                                    addEntity(new Explosion((IExplosion) bullet,
                                             bullet.getX(),
                                             bullet.getY()));
                                 } else {
-                                    removeEntity.add(bullet);
+                                    removeEntity(bullet);
                                 }
                                 if (!mob.isLive()) {
                                     if (!(mob instanceof Player)) {
-                                        removeEntity.add(mob);
+                                        removeEntity(mob);
                                     }
                                 }
                                 break;
@@ -172,15 +192,6 @@ public class StartupLevel extends Level {
                     }
                 }
             }
-        }
-
-        for (Entity entity : removeEntity) {
-            removeEntity(entity);
-        }
-        removeEntity.clear();
-
-        for (Entity entity : needAddEntity) {
-            addEntity(entity);
         }
     }
 

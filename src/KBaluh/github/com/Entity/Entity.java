@@ -16,6 +16,16 @@ public abstract class Entity {
     private int x;
     private int y;
 
+    private boolean removed = false;
+
+    public void remove() {
+        removed = true;
+    }
+
+    public boolean isRemoved() {
+        return removed;
+    }
+
     public void init(Level level) {
         this.level = level;
     }
