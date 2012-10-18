@@ -12,7 +12,7 @@ import java.util.Random;
  */
 public class BubbleSpawner extends Spawner {
 
-    private static int spawnInterval = 40;
+    private static int spawnInterval = 20;
 
     public BubbleSpawner() {
         super(0, 0, spawnInterval);
