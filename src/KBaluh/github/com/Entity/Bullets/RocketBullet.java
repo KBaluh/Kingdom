@@ -1,11 +1,14 @@
 package KBaluh.github.com.Entity.Bullets;
 
+import KBaluh.github.com.Entity.Decorations.BubbleType;
+import KBaluh.github.com.Entity.Decorations.RocketBubble;
 import KBaluh.github.com.Entity.Direction;
 import KBaluh.github.com.Entity.Team;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Author: KBaluh
@@ -24,6 +27,11 @@ public class RocketBullet extends Bullet implements IExplosion {
 
     private ArrayList<Image> explosions = new ArrayList<Image>();
 
+    private Random random = new Random();
+
+    private int ticks = 1;
+    private int currentTick = 0;
+
     public RocketBullet(int x, int y, Direction dir, Team team) {
         super(x, y, speed, dir, damage, team);
         this.dir = dir;
@@ -33,6 +41,19 @@ public class RocketBullet extends Bullet implements IExplosion {
         explosions.add(new ImageIcon("res/expl3.png").getImage());
         explosions.add(new ImageIcon("res/expl4.png").getImage());
         explosions.add(new ImageIcon("res/expl5.png").getImage());
+    }
+
+    public void tick() {
+        super.tick();
+        if (currentTick <= ticks) {
+            currentTick++;
+        } else {
+            int y = random.nextInt(15);
+            RocketBubble bubble = new RocketBubble(getX(), getY() + y, BubbleType.Small);
+            level.addEntity(bubble);
+
+            currentTick = 0;
+        }
     }
 
     public Image getImage() {
