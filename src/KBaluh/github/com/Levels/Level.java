@@ -36,4 +36,5 @@ public abstract class Level implements Runnable {
     public abstract void onKeyUp(KeyEvent e);
     public abstract void paint(Graphics g);
     public abstract void tick();
+    public abstract boolean canMove(int x, int y, int width, int height);
 }

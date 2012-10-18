@@ -117,6 +117,11 @@ public class StartupLevel extends Level {
         checkEntitiesPosition();
     }
 
+    public boolean canMove(int x, int y, int width, int height) {
+        return ((x >= 0 && x <= gameScreen.getWidth() - width) &&
+                (y >= 0 && y <= gameScreen.getHeight() - height));
+    }
+
     private void checkEntitiesSupportItemCollision() {
         List<Entity> itemsRemove = new ArrayList<Entity>();
         for (Entity bonusEntity : entities) {

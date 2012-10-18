@@ -36,8 +36,10 @@ public class Player extends Mob {
             return;
         }
 
-        setX(getX() + dx);
-        setY(getY() + dy);
+        if (level.canMove(getX() + dx, getY() + dy, getImageWidth(), getImageHeight())) {
+            setX(getX() + dx);
+            setY(getY() + dy);
+        }
         weapon.tick();
     }
 
@@ -85,74 +87,42 @@ public class Player extends Mob {
         switch (keyCode) {
             case KeyEvent.VK_W :
                 dy = -speed;
-
-                if (getY() <= 0) {
-                    setY(10);
-                }
                 break;
 
             case KeyEvent.VK_UP :
                 dy = -speed;
-
-                if (getY() <= 0) {
-                    setY(10);
-                }
                 break;
 
             case KeyEvent.VK_S :
                 dy = speed;
-
-                if (getY() >= level.gameScreen.getHeight() - image.getHeight(null)) {
-                    setY(level.gameScreen.getHeight() - image.getHeight(null) - 10);
-                }
                 break;
 
             case KeyEvent.VK_DOWN :
                 dy = speed;
-
-                if (getY() >= level.gameScreen.getHeight() - image.getHeight(null)) {
-                    setY(level.gameScreen.getHeight() - image.getHeight(null) - 10);
-                }
                 break;
 
             case KeyEvent.VK_D :
                 dx = speed;
                 image = imageRight;
                 setDir(Direction.RIGHT);
-
-                if (getX() + image.getWidth(null) >= level.gameScreen.getWidth()) {
-                    setX(level.gameScreen.getWidth() - image.getWidth(null) - 10);
-                }
                 break;
 
             case KeyEvent.VK_RIGHT :
                 dx = speed;
                 image = imageRight;
                 setDir(Direction.RIGHT);
-
-                if (getX() + image.getWidth(null) >= level.gameScreen.getWidth()) {
-                    setX(level.gameScreen.getWidth() - image.getWidth(null) - 10);
-                }
                 break;
 
             case KeyEvent.VK_A :
                 dx = -speed;
                 image = imageLeft;
                 setDir(Direction.LEFT);
-
-                if (getX() <= 0) {
-                    setX(10);
-                }
                 break;
 
             case KeyEvent.VK_LEFT :
                 dx = -speed;
                 image = imageLeft;
                 setDir(Direction.LEFT);
-
-                if (getX() <= 0) {
-                    setX(10);
-                }
                 break;
 
             case KeyEvent.VK_SPACE:
