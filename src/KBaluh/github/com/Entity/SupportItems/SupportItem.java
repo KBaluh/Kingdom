@@ -1,7 +1,6 @@
 package KBaluh.github.com.Entity.SupportItems;
 
 import KBaluh.github.com.Entity.Entity;
-import KBaluh.github.com.Levels.Level;
 
 import java.awt.event.KeyEvent;
 
@@ -11,14 +10,11 @@ import java.awt.event.KeyEvent;
  */
 public abstract class SupportItem extends Entity {
 
-    protected Level level;
     private int speed;
-
-    private boolean bonusReceived = false;
     private int bonus;
+    private boolean bonusReceived = false;
 
-    public SupportItem(Level level, int x, int y, int speed, int bonus) {
-        this.level = level;
+    public SupportItem(int x, int y, int speed, int bonus) {
         this.speed = speed;
         this.bonus = bonus;
         setX(x);

@@ -1,7 +1,6 @@
 package KBaluh.github.com.Entity.Bullets;
 
 import KBaluh.github.com.Entity.Entity;
-import KBaluh.github.com.Levels.Level;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -19,13 +18,10 @@ public class Explosion extends Entity {
     private int ticks = 0;
     private int currentTick = 0;
 
-    private Level level;
-
     private boolean isDone = false;
 
-    public Explosion(Level level, IExplosion expolosionEntity, int x, int y) {
+    public Explosion(IExplosion expolosionEntity, int x, int y) {
         this.expolosionEntity = expolosionEntity;
-        this.level = level;
 
         int offsetX = 0;
         int offsetY = -60;

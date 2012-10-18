@@ -2,7 +2,6 @@ package KBaluh.github.com.Entity.Mobs;
 
 import KBaluh.github.com.Entity.Direction;
 import KBaluh.github.com.Entity.Team;
-import KBaluh.github.com.Levels.Level;
 import KBaluh.github.com.Weapons.RocketGun;
 
 import javax.swing.*;
@@ -21,8 +20,8 @@ public class Player extends Mob {
 
     private static final float hp = 100;
 
-    public Player(Level level, int x, int y) {
-        super(level, x, y, hp, Team.TeamOne);
+    public Player(int x, int y) {
+        super(x, y, hp, Team.TeamOne);
         RocketGun weapon = new RocketGun(this);
         setWeapon(weapon);
         setDir(Direction.RIGHT);

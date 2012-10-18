@@ -3,7 +3,6 @@ package KBaluh.github.com.Levels;
 import KBaluh.github.com.Entity.Bullets.Bullet;
 import KBaluh.github.com.Entity.Bullets.Explosion;
 import KBaluh.github.com.Entity.Bullets.IExplosion;
-import KBaluh.github.com.Entity.Bullets.RocketBullet;
 import KBaluh.github.com.Entity.Entity;
 import KBaluh.github.com.Entity.Mobs.Mob;
 import KBaluh.github.com.Entity.Mobs.Player;
@@ -11,7 +10,6 @@ import KBaluh.github.com.Entity.Spawners.BubbleSpawner;
 import KBaluh.github.com.Entity.Spawners.HunterFishSpawner;
 import KBaluh.github.com.Entity.Spawners.Spawner;
 import KBaluh.github.com.Entity.Spawners.SupportItemSpawner;
-import KBaluh.github.com.Entity.SupportItems.IBonusReceiver;
 import KBaluh.github.com.Entity.SupportItems.MedicineChest;
 import KBaluh.github.com.GameScreen;
 
@@ -43,16 +41,17 @@ public class StartupLevel extends Level {
 
         int playerX = 300;
         int playerY = 200;
-        player = new Player(this, playerX, playerY);
+        player = new Player(playerX, playerY);
         addEntity(player);
 
-        spawners.add(new BubbleSpawner(this));
-        spawners.add(new HunterFishSpawner(this));
-        spawners.add(new SupportItemSpawner(this));
+        addSpawner(new BubbleSpawner());
+        addSpawner(new HunterFishSpawner());
+        addSpawner(new SupportItemSpawner());
     }
 
     public void addEntity(Entity entity) {
         entities.add(entity);
+        entity.init(this);
     }
 
     public void removeEntity(Entity entity) {
@@ -151,8 +150,7 @@ public class StartupLevel extends Level {
                                 mob.hurt(bullet.getDamage());
                                 bullet.hit();
                                 if (bullet instanceof IExplosion) {
-                                    needAddEntity.add(new Explosion(this,
-                                            (IExplosion) bullet,
+                                    needAddEntity.add(new Explosion((IExplosion) bullet,
                                             bullet.getX(),
                                             bullet.getY()));
                                 } else {
@@ -217,5 +215,10 @@ public class StartupLevel extends Level {
 
     private boolean isGame() {
         return (player.isLive() && (fishSkips <= maxFishSkips));
+    }
+
+    private void addSpawner(Spawner spawner) {
+        spawners.add(spawner);
+        spawner.init(this);
     }
 }

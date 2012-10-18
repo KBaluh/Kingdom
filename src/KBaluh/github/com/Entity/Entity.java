@@ -1,5 +1,7 @@
 package KBaluh.github.com.Entity;
 
+import KBaluh.github.com.Levels.Level;
+
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
@@ -9,8 +11,14 @@ import java.awt.event.KeyEvent;
  */
 public abstract class Entity {
 
+    public Level level;
+
     private int x;
     private int y;
+
+    public void init(Level level) {
+        this.level = level;
+    }
 
     public int getX() {
         return x;

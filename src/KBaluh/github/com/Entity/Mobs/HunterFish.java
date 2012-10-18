@@ -2,7 +2,6 @@ package KBaluh.github.com.Entity.Mobs;
 
 import KBaluh.github.com.Entity.Direction;
 import KBaluh.github.com.Entity.Team;
-import KBaluh.github.com.Levels.Level;
 import KBaluh.github.com.Weapons.RocketGun;
 import KBaluh.github.com.Weapons.Weapon;
 
@@ -28,8 +27,8 @@ public class HunterFish extends Mob implements ActionListener {
 
     private static final float hp = 20;
 
-    public HunterFish(Level level, int x, int y, Direction dir) {
-        super(level, x, y, hp, Team.TeamTwo);
+    public HunterFish(int x, int y, Direction dir) {
+        super(x, y, hp, Team.TeamTwo);
         setDir(dir);
         speed = fishSpeed;
 

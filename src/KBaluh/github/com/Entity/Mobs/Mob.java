@@ -4,7 +4,6 @@ import KBaluh.github.com.Entity.Direction;
 import KBaluh.github.com.Entity.Entity;
 import KBaluh.github.com.Entity.SupportItems.IBonusReceiver;
 import KBaluh.github.com.Entity.Team;
-import KBaluh.github.com.Levels.Level;
 import KBaluh.github.com.Weapons.Weapon;
 
 import java.awt.*;
@@ -16,7 +15,6 @@ import java.awt.event.KeyEvent;
  */
 public abstract class Mob extends Entity implements IBonusReceiver {
 
-    public Level level;
     protected int dx;
     protected int dy;
     protected int speed = 3;
@@ -27,8 +25,7 @@ public abstract class Mob extends Entity implements IBonusReceiver {
     private float hp = 0;
     private boolean live = true;
 
-    public Mob(Level level, int x, int y, float hp, Team team) {
-        this.level = level;
+    public Mob(int x, int y, float hp, Team team) {
         setX(x);
         setY(y);
         setTeam(team);
