@@ -30,7 +30,7 @@ public class HunterFish extends Mob implements ActionListener {
     public HunterFish(int x, int y, Direction dir) {
         super(x, y, hp, Team.TeamTwo);
         setDir(dir);
-        speed = fishSpeed;
+        setSpeed(fishSpeed);
 
         Weapon weapon = new RocketGun(this);
         setWeapon(weapon);

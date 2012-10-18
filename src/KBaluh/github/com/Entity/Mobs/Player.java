@@ -13,18 +13,19 @@ import java.awt.event.KeyEvent;
  * Date: 16.10.12:18:57
  */
 public class Player extends Mob {
-
     private Image imageLeft = new ImageIcon("res/player_left.png").getImage();
     private Image imageRight = new ImageIcon("res/player_right.png").getImage();
     private Image image = imageRight;
 
-    private static final float hp = 100;
+    private static final float startHp = 100;
+    private static final int startSpeed = 4;
 
     public Player(int x, int y) {
-        super(x, y, hp, Team.TeamOne);
+        super(x, y, startHp, Team.TeamOne);
         RocketGun weapon = new RocketGun(this);
         setWeapon(weapon);
         setDir(Direction.RIGHT);
+        setSpeed(startSpeed);
     }
 
     public Image getImage() {
@@ -86,41 +87,41 @@ public class Player extends Mob {
 
         switch (keyCode) {
             case KeyEvent.VK_W :
-                dy = -speed;
+                dy = -getSpeed();
                 break;
 
             case KeyEvent.VK_UP :
-                dy = -speed;
+                dy = -getSpeed();
                 break;
 
             case KeyEvent.VK_S :
-                dy = speed;
+                dy = getSpeed();
                 break;
 
             case KeyEvent.VK_DOWN :
-                dy = speed;
+                dy = getSpeed();
                 break;
 
             case KeyEvent.VK_D :
-                dx = speed;
+                dx = getSpeed();
                 image = imageRight;
                 setDir(Direction.RIGHT);
                 break;
 
             case KeyEvent.VK_RIGHT :
-                dx = speed;
+                dx = getSpeed();
                 image = imageRight;
                 setDir(Direction.RIGHT);
                 break;
 
             case KeyEvent.VK_A :
-                dx = -speed;
+                dx = -getSpeed();
                 image = imageLeft;
                 setDir(Direction.LEFT);
                 break;
 
             case KeyEvent.VK_LEFT :
-                dx = -speed;
+                dx = -getSpeed();
                 image = imageLeft;
                 setDir(Direction.LEFT);
                 break;

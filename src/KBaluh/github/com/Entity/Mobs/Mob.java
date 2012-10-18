@@ -17,11 +17,12 @@ public abstract class Mob extends Entity implements IBonusReceiver {
 
     protected int dx;
     protected int dy;
-    protected int speed = 3;
     protected Weapon weapon;
+
     private Team team = Team.Neutral;
     private Direction dir = Direction.LEFT;
-
+    private int speed = 3;
+    private float maxHp;
     private float hp = 0;
     private boolean live = true;
 
@@ -29,7 +30,16 @@ public abstract class Mob extends Entity implements IBonusReceiver {
         setX(x);
         setY(y);
         setTeam(team);
+        this.maxHp = hp;
         this.hp = hp;
+    }
+
+    protected int getSpeed() {
+        return speed;
+    }
+
+    protected void setSpeed(int speed) {
+        this.speed = speed;
     }
 
     public float getHp() {
@@ -91,13 +101,25 @@ public abstract class Mob extends Entity implements IBonusReceiver {
         }
     }
 
+    /**
+     * Method implements from IBonusReceiver.
+     * Increase hp for mob.
+     * @param hp - bonus hp
+     */
     public void increaseHp(float hp) {
         if (isLive()) {
             this.hp += hp;
+            if (this.hp > maxHp) {
+                this.hp = maxHp;
+            }
         }
     }
 
+    public void onKeyDown(KeyEvent e) {
+    }
+
+    public void onKeyUp(KeyEvent e) {
+    }
+
     public abstract Image getImage();
-    public abstract void onKeyDown(KeyEvent e);
-    public abstract void onKeyUp(KeyEvent e);
 }
