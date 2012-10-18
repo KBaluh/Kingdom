@@ -3,7 +3,6 @@ package KBaluh.github.com.Entity.Spawners;
 import KBaluh.github.com.Entity.Decorations.Bubble;
 import KBaluh.github.com.Entity.Decorations.BubbleType;
 import KBaluh.github.com.Entity.Entity;
-import KBaluh.github.com.Levels.Level;
 
 import java.util.Random;
 
@@ -13,10 +12,10 @@ import java.util.Random;
  */
 public class BubbleSpawner extends Spawner {
 
-    private static int spawnInterval = 40;
+    private static int spawnInterval = 20;
 
-    public BubbleSpawner(Level level) {
-        super(level, 0, 0, spawnInterval);
+    public BubbleSpawner() {
+        super(0, 0, spawnInterval);
     }
 
     public Entity getEntity() {

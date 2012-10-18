@@ -1,7 +1,6 @@
 package KBaluh.github.com.Entity.Spawners;
 
 import KBaluh.github.com.Entity.Entity;
-import KBaluh.github.com.Levels.Level;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -13,12 +12,10 @@ import java.util.Random;
  */
 public abstract class Spawner extends Entity {
 
-    protected Level level;
     private int spawnInterval = 60;
     private int freezeTime = 0;
 
-    public Spawner(Level level, int x, int y, int spawnInterval) {
-        this.level = level;
+    public Spawner(int x, int y, int spawnInterval) {
         this.spawnInterval = spawnInterval;
         setX(x);
         setY(y);
