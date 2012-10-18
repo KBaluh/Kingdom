@@ -25,16 +25,40 @@ import java.util.List;
  */
 public class StartupLevel extends Level {
 
+    /**
+     * Image for paint background
+     */
     private Image background = new ImageIcon("res/background.jpg").getImage();
 
+    /**
+     * All entities on level
+     */
     private List<Entity> entities = new ArrayList<Entity>();
-    private Player player;
 
+    /**
+     * All spawners on level
+     */
     private List<Spawner> spawners = new ArrayList<Spawner>();
 
+    /**
+     * User player
+     */
+    private Player player;
+
+    /**
+     * Level victory conditions: max skips fish
+     */
     private int maxFishSkips = 10;
+
+    /**
+     * Level victory condition: player skips fish count
+     */
     private int fishSkips = 0;
 
+    /**
+     * Constructor
+     * @param gameScreen - game screen is JPanel
+     */
     public StartupLevel(GameScreen gameScreen) {
         super(gameScreen);
 
@@ -48,11 +72,19 @@ public class StartupLevel extends Level {
         addSpawner(new SupportItemSpawner());
     }
 
+    /**
+     * Add entity on entities list and init entity level
+     * @param entity - see Entity
+     */
     public void addEntity(Entity entity) {
         entities.add(entity);
         entity.init(this);
     }
 
+    /**
+     * Mark to remove entity
+     * @param entity - entity from entities
+     */
     public void removeEntity(Entity entity) {
         entity.remove();
     }
@@ -69,19 +101,20 @@ public class StartupLevel extends Level {
 
     @Override
     public void paint(Graphics g) {
+        // Paint background layer
         g.drawImage(background, 0, 0, null);
-        for (Entity entity : entities) {
+
+        // Paint all entities
+        for (int i = 0; i < entities.size(); ++i) {
+            Entity entity = entities.get(i);
             Image image = entity.getImage();
             if (image != null) {
                 g.drawImage(image, entity.getX(), entity.getY(), null);
             }
         }
-        g.drawImage(player.getImage(), player.getX(), player.getY(), null);
 
-        g.setColor(Color.YELLOW);
-        g.drawString("Entities: " + entities.size() +
-                ", Player life: " + player.getHp() +
-                ", Fish skips: " + fishSkips + "/" + maxFishSkips, 10, 15);
+        // Paint information panel
+        paintPanel(g);
     }
 
     @Override
@@ -93,148 +126,153 @@ public class StartupLevel extends Level {
 
         for (int s = 0; s < spawners.size(); ++s) {
             Spawner spawner = spawners.get(s);
-            if (spawner != null) {
-                spawner.tick();
-            } else {
-                spawners.remove(s);
-            }
+            spawner.tick();
         }
 
         for (int i = 0; i < entities.size(); ++i) {
             Entity entity = entities.get(i);
-            if (entity != null) {
-                if (!entity.isRemoved())
-                {
-                    entity.tick();
-                }
-            } else {
-                entities.remove(i);
-            }
-        }
-        player.tick();
-
-        checkEntitiesSupportItemCollision();
-        checkEntitiesBulletCollision();
-        checkEntitiesPosition();
-
-        for (int i = 0; i < entities.size(); ++i) {
-            Entity entity = entities.get(i);
-            if (entity == null) {
+            if (entity.isRemoved())
+            {
                 entities.remove(i);
                 continue;
             }
 
-            if (entity.isRemoved()) {
-                entities.remove(i);
+            // Call entity tick
+            entity.tick();
+
+            if (!handleCanMove(entity)) {
+                continue;
             }
+            handleBulletCollision(entity);
+            handleSupportItem(entity);
         }
     }
 
+    /**
+     * Check if the player outside level
+     * @param x - player coordinate x
+     * @param y - player coordinate y
+     * @param width - player width
+     * @param height - player height
+     * @return player can move
+     */
     public boolean canMove(int x, int y, int width, int height) {
         return ((x >= 0 && x <= gameScreen.getWidth() - width) &&
                 (y >= 0 && y <= gameScreen.getHeight() - height));
     }
 
-    private void checkEntitiesSupportItemCollision() {
-        for (int i = 0; i < entities.size(); ++i) {
-            Entity bonusEntity = entities.get(i);
-            if (bonusEntity == null) {
-                continue;
-            }
+    /**
+     * Check if the mob outside level
+     * @param x - mob coordinate x
+     * @param y - mob coordinate y
+     * @param width - mob width
+     * @param height - mob height
+     * @return can move
+     */
+    private boolean canMoveMob(int x, int y, int width, int height) {
+        int offsetX = -width;
+        int offsetY = -height;
+        return ((x >= offsetX && x <= gameScreen.getWidth() + width) &&
+                (y >= offsetY && y <= gameScreen.getHeight()));
+    }
 
-            if (bonusEntity instanceof MedicineChest) {
-                if (bonusEntity.haveCollision(player)) {
-                    player.increaseHp(((MedicineChest) bonusEntity).getBonus());
-                    removeEntity(bonusEntity);
-                    break;
+    /**
+     * Check is can move. If not - remove
+     * @param entity - with entities list
+     * @return result - true if can move, false is not
+     */
+    private boolean handleCanMove(Entity entity) {
+        boolean result = true;
+        if (!(entity instanceof Player)) {
+            if (!canMoveMob(entity.getX(), entity.getY(),
+                    entity.getImageWidth(), entity.getImageHeight())) {
+                if (entity instanceof Mob) {
+                    fishSkips++;
                 }
+                removeEntity(entity);
+                result = false;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Check if entity is support item
+     * @param entity - with entities list
+     */
+    private void handleSupportItem(Entity entity) {
+        if (entity instanceof MedicineChest) {
+            if (entity.haveCollision(player)) {
+                player.increaseHp(((MedicineChest) entity).getBonus());
+                removeEntity(entity);
             }
         }
     }
 
-    private void checkEntitiesBulletCollision() {
-        for (int i = 0; i < entities.size(); ++i) {
-            Entity entity = entities.get(i);
-            if (entity == null) {
-                continue;
-            }
+    /**
+     * Handle Bullet collision
+     * @param entity - with entities list
+     */
+    private void handleBulletCollision(Entity entity) {
+        if (entity instanceof Bullet) {
+            Bullet bullet = (Bullet) entity;
 
-            if (entity instanceof Bullet) {
-                Bullet bullet = (Bullet) entity;
-
-                for (int j = 0; j < entities.size(); j++) {
-                    Entity entityMob = entities.get(j);
-                    if (entityMob == null) {
+            for (int j = 0; j < entities.size(); j++) {
+                Entity entityMob = entities.get(j);
+                if (entityMob instanceof Mob) {
+                    Mob mob = (Mob) entityMob;
+                    if (mob.getTeam() == bullet.getTeam()) {
                         continue;
                     }
 
-                    if (entityMob instanceof Mob) {
-                        Mob mob = (Mob) entityMob;
-                        if (mob.getTeam() != bullet.getTeam()) {
-                            if (mob.haveCollision(bullet)) {
-                                mob.hurt(bullet.getDamage());
-                                bullet.hit();
-                                if (bullet instanceof IExplosion) {
-                                    addEntity(new Explosion((IExplosion) bullet,
-                                            bullet.getX(),
-                                            bullet.getY()));
-                                } else {
-                                    removeEntity(bullet);
-                                }
-                                if (!mob.isLive()) {
-                                    if (!(mob instanceof Player)) {
-                                        removeEntity(mob);
-                                    }
-                                }
-                                break;
+                    if (mob.haveCollision(bullet)) {
+                        mob.hurt(bullet.getDamage());
+                        bullet.hit();
+
+                        if (bullet instanceof IExplosion) {
+                            addEntity(new Explosion((IExplosion) bullet,
+                                    bullet.getX(),
+                                    bullet.getY()));
+                        } else {
+                            removeEntity(bullet);
+                        }
+                        if (!mob.isLive()) {
+                            if (!(mob instanceof Player)) {
+                                removeEntity(mob);
                             }
                         }
+                        break;
                     }
                 }
             }
         }
     }
 
-    private void checkEntitiesPosition() {
-        List<Entity> removeList = new ArrayList<Entity>();
-
-        for (Entity entity : entities) {
-            if (entity != null) {
-                int top = -10;
-                int bottom = getScreenHeight() + 10;
-                int left = -10;
-                int right = getScreenWidth() + 10;
-
-                if (entity.getY() >= bottom || entity.getY() <= top) {
-                    if (!(entity instanceof Player)) {
-                        if (entity instanceof Mob) {
-                            fishSkips++;
-                        }
-                        removeList.add(entity);
-                    }
-                } else if (entity.getX() <= left || entity.getX() >= right) {
-                    if (!(entity instanceof Player)) {
-                        if (entity instanceof Mob) {
-                            fishSkips++;
-                        }
-                        removeList.add(entity);
-                    }
-                }
-            }
-        }
-
-        for (Entity entity : removeList) {
-            removeEntity(entity);
-        }
-        removeList.clear();
-    }
-
+    /**
+     * Level condition to game.
+     * @return if continue game - return true
+     */
     private boolean isGame() {
         return (player.isLive() && (fishSkips <= maxFishSkips));
     }
 
+    /**
+     * Spawner layer
+     * @param spawner - Entity spawner
+     */
     private void addSpawner(Spawner spawner) {
         spawners.add(spawner);
         spawner.init(this);
+    }
+
+    /**
+     * Draw information panel after all entities draw
+     * @param g - graphics for paint
+     */
+    private void paintPanel(Graphics g) {
+        g.setColor(Color.YELLOW);
+        g.drawString("Entities: " + entities.size() +
+                ", Player life: " + player.getHp() +
+                ", Fish skips: " + fishSkips + "/" + maxFishSkips, 10, 15);
     }
 }
