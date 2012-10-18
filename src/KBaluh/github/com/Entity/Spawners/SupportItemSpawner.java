@@ -2,7 +2,6 @@ package KBaluh.github.com.Entity.Spawners;
 
 import KBaluh.github.com.Entity.Entity;
 import KBaluh.github.com.Entity.SupportItems.MedicineChest;
-import KBaluh.github.com.Levels.Level;
 
 import java.util.Random;
 
@@ -14,8 +13,8 @@ public class SupportItemSpawner extends Spawner {
 
     private static int spawnInterval = 3000;
 
-    public SupportItemSpawner(Level level) {
-        super(level, 0, 0, spawnInterval);
+    public SupportItemSpawner() {
+        super(0, 0, spawnInterval);
     }
 
     public Entity getEntity() {
@@ -29,7 +28,7 @@ public class SupportItemSpawner extends Spawner {
     private Entity getRandomEntity() {
         Random random = new Random();
         int x = random.nextInt(level.getScreenWidth());
-        return new MedicineChest(level, x, level.getScreenHeight());
+        return new MedicineChest(x, level.getScreenHeight());
     }
 
 }

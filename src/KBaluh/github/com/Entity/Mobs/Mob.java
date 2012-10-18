@@ -4,7 +4,6 @@ import KBaluh.github.com.Entity.Direction;
 import KBaluh.github.com.Entity.Entity;
 import KBaluh.github.com.Entity.SupportItems.IBonusReceiver;
 import KBaluh.github.com.Entity.Team;
-import KBaluh.github.com.Levels.Level;
 import KBaluh.github.com.Weapons.Weapon;
 
 import java.awt.*;
@@ -16,23 +15,31 @@ import java.awt.event.KeyEvent;
  */
 public abstract class Mob extends Entity implements IBonusReceiver {
 
-    public Level level;
     protected int dx;
     protected int dy;
-    protected int speed = 3;
     protected Weapon weapon;
+
     private Team team = Team.Neutral;
     private Direction dir = Direction.LEFT;
-
+    private int speed = 3;
+    private float maxHp;
     private float hp = 0;
     private boolean live = true;
 
-    public Mob(Level level, int x, int y, float hp, Team team) {
-        this.level = level;
+    public Mob(int x, int y, float hp, Team team) {
         setX(x);
         setY(y);
         setTeam(team);
+        this.maxHp = hp;
         this.hp = hp;
+    }
+
+    protected int getSpeed() {
+        return speed;
+    }
+
+    protected void setSpeed(int speed) {
+        this.speed = speed;
     }
 
     public float getHp() {
@@ -94,13 +101,25 @@ public abstract class Mob extends Entity implements IBonusReceiver {
         }
     }
 
+    /**
+     * Method implements from IBonusReceiver.
+     * Increase hp for mob.
+     * @param hp - bonus hp
+     */
     public void increaseHp(float hp) {
         if (isLive()) {
             this.hp += hp;
+            if (this.hp > maxHp) {
+                this.hp = maxHp;
+            }
         }
     }
 
+    public void onKeyDown(KeyEvent e) {
+    }
+
+    public void onKeyUp(KeyEvent e) {
+    }
+
     public abstract Image getImage();
-    public abstract void onKeyDown(KeyEvent e);
-    public abstract void onKeyUp(KeyEvent e);
 }

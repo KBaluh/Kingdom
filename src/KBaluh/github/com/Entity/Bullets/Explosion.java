@@ -1,7 +1,6 @@
 package KBaluh.github.com.Entity.Bullets;
 
 import KBaluh.github.com.Entity.Entity;
-import KBaluh.github.com.Levels.Level;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -19,13 +18,8 @@ public class Explosion extends Entity {
     private int ticks = 0;
     private int currentTick = 0;
 
-    private Level level;
-
-    private boolean isDone = false;
-
-    public Explosion(Level level, IExplosion expolosionEntity, int x, int y) {
+    public Explosion(IExplosion expolosionEntity, int x, int y) {
         this.expolosionEntity = expolosionEntity;
-        this.level = level;
 
         int offsetX = 0;
         int offsetY = -60;
@@ -36,19 +30,14 @@ public class Explosion extends Entity {
     }
 
     public void tick() {
-        if (isDone) {
-            return;
-        }
-
         if (currentTick >= ticks) {
             if (currentFrame < expolosionEntity.getFrames()) {
                 image = expolosionEntity.getImageByFrame(currentFrame);
                 currentFrame++;
                 currentTick = 0;
             } else {
-                isDone = true;
-                level.needRemoveEntity(this);
-                level.needRemoveEntity((Entity) expolosionEntity);
+                level.removeEntity((Entity) expolosionEntity);
+                level.removeEntity(this);
             }
         } else {
             currentTick++;
@@ -56,9 +45,6 @@ public class Explosion extends Entity {
     }
 
     public Image getImage() {
-        if (isDone) {
-            return null;
-        }
         return image;
     }
 
