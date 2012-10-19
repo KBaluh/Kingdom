@@ -18,7 +18,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -32,13 +31,19 @@ public class StartupLevel extends Level {
      */
     private Image background = Art.background;
 
+    /**
+     * Entities on back layer
+     */
     private List<Entity> entitiesBack = new ArrayList<Entity>();
 
     /**
-     * All entities on level
+     * Entities on center layer
      */
     private List<Entity> entities = new ArrayList<Entity>();
 
+    /**
+     * Entities on pop layer
+     */
     private List<Entity> entitiesPop = new ArrayList<Entity>();
 
     /**
