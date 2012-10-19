@@ -286,7 +286,7 @@ public class StartupLevel extends Level {
      */
     private void paintPanel(Graphics g) {
         g.setColor(Color.YELLOW);
-        g.drawString("Entities: " + entities.size() +
+        g.drawString("Entities: " + (entities.size() + entitiesBack.size() + entitiesPop.size()) +
                 ", Player life: " + player.getHp() +
                 ", Fish skips: " + fishSkips + "/" + maxFishSkips +
                 ", Scores: " + player.getScores(), 10, 15);
