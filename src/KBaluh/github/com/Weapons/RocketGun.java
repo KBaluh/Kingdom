@@ -10,16 +10,19 @@ import KBaluh.github.com.Entity.Mobs.Mob;
 public class RocketGun extends Weapon {
 
     private static int shootDelay = 30;
+    private int offsetX = 65;
+    private int offsetY = 55;
 
-    public RocketGun(Mob mob) {
+    public RocketGun(Mob mob, int offsetX, int offsetY) {
         super(mob, shootDelay);
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
     }
 
     public void useWeapon() {
         if (canShoot) {
             canShoot = false;
-            int offsetX = 65;
-            int offsetY = 55;
+
             RocketBullet bullet = new RocketBullet(mob.getX() + offsetX,
                     mob.getY() + offsetY,
                     mob.getDir(), mob.getTeam());
