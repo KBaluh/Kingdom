@@ -14,7 +14,7 @@ public class SupportItemSpawner extends Spawner {
     private static int spawnInterval = 3000;
 
     public SupportItemSpawner() {
-        super(0, 0, spawnInterval);
+        super(0, 0, spawnInterval, EntityLayer.Pop);
     }
 
     public Entity getEntity() {

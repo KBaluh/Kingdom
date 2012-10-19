@@ -29,7 +29,9 @@ public abstract class Level implements Runnable {
     public void run() {
     }
 
+    public abstract void addEntityBack(Entity entity);
     public abstract void addEntity(Entity entity);
+    public abstract void addEntityPop(Entity entity);
     public abstract void removeEntity(Entity entity);
     public abstract void onKeyDown(KeyEvent e);
     public abstract void onKeyUp(KeyEvent e);
