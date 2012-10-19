@@ -95,6 +95,28 @@ public class StartupLevel extends Level {
         addSpawner(new SupportItemSpawner());
     }
 
+    public boolean levelIsDone() {
+        return  (levelCount >= 2);
+    }
+
+    public void levelStop() {
+        for (int i = 0; i < spawners.size(); ++i) {
+            spawners.remove(i);
+        }
+
+        for (int i = 0; i < entitiesBack.size(); ++i) {
+            entitiesBack.remove(i);
+        }
+
+        for (int i = 0; i < entities.size(); ++i) {
+            entities.remove(i);
+        }
+
+        for (int i = 0; i < entitiesPop.size(); ++i) {
+            entitiesPop.remove(i);
+        }
+    }
+
     /**
      * Spawner layer
      * @param spawner - Entity spawner
