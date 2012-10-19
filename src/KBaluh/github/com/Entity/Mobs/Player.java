@@ -21,6 +21,8 @@ public class Player extends Mob {
     private static final float startHp = 100;
     private static final int startSpeed = 4;
 
+    private int scores = 0;
+
     public Player(int x, int y) {
         super(x, y, startHp, Team.TeamOne);
         RocketGun weapon = new RocketGun(this);
@@ -135,5 +137,13 @@ public class Player extends Mob {
         if (keyCode == ctrl) {
             weapon.useWeapon();
         }
+    }
+
+    public int getScores() {
+        return scores;
+    }
+
+    public void addScores(int scores) {
+        this.scores += scores;
     }
 }
