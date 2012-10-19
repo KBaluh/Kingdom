@@ -10,8 +10,6 @@ import java.util.Random;
  */
 public class RocketBubble extends Bubble {
 
-    private Image image = new ImageIcon("res/weapon_bubble_small.png").getImage();
-
     private Random random = new Random();
     private static int bubbleSpeed = 4;
     private int timeLife = 2;
