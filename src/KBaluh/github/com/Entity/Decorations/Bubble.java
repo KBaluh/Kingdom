@@ -23,10 +23,13 @@ public class Bubble extends Entity {
     private int speed;
     private int dy;
 
+    public BubbleType type = BubbleType.Small;
+
     public Bubble(int x, int y, int speed, BubbleType type) {
         this.x = x;
         this.y = y;
         this.speed = speed;
+        this.type = type;
 
         if (type == BubbleType.Big) {
             image = imageBig;

@@ -15,7 +15,7 @@ public class HunterFishSpawner extends Spawner {
     private static int spawnInterval = 80;
 
     public HunterFishSpawner() {
-        super(0, 0, spawnInterval);
+        super(0, 0, spawnInterval, EntityLayer.General);
     }
 
     public Entity getEntity() {

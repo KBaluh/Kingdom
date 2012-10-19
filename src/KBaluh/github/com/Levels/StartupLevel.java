@@ -18,6 +18,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -31,10 +32,14 @@ public class StartupLevel extends Level {
      */
     private Image background = Art.background;
 
+    private List<Entity> entitiesBack = new ArrayList<Entity>();
+
     /**
      * All entities on level
      */
     private List<Entity> entities = new ArrayList<Entity>();
+
+    private List<Entity> entitiesPop = new ArrayList<Entity>();
 
     /**
      * All spawners on level
@@ -83,6 +88,22 @@ public class StartupLevel extends Level {
     }
 
     /**
+     * Add entity on back layer
+     * @param entity - Entity
+     */
+    public void addEntityBack(Entity entity) {
+        entitiesBack.add(entity);
+    }
+
+    /**
+     * Add entity on pop layer
+     * @param entity - Entity
+     */
+    public void addEntityPop(Entity entity) {
+        entitiesPop.add(entity);
+    }
+
+    /**
      * Mark to remove entity
      * @param entity - entity from entities
      */
@@ -105,13 +126,19 @@ public class StartupLevel extends Level {
         // Paint background layer
         g.drawImage(background, 0, 0, null);
 
-        // Paint all entities
+        for (int i = 0; i < entitiesBack.size(); ++i) {
+            Entity entity = entitiesBack.get(i);
+            paintEntity(g, entity);
+        }
+
         for (int i = 0; i < entities.size(); ++i) {
             Entity entity = entities.get(i);
-            Image image = entity.getImage();
-            if (image != null) {
-                g.drawImage(image, entity.getX(), entity.getY(), null);
-            }
+            paintEntity(g, entity);
+        }
+
+        for (int i = 0; i < entitiesPop.size(); ++i) {
+            Entity entity = entitiesPop.get(i);
+            paintEntity(g, entity);
         }
 
         // Paint information panel
@@ -130,23 +157,9 @@ public class StartupLevel extends Level {
             spawner.tick();
         }
 
-        for (int i = 0; i < entities.size(); ++i) {
-            Entity entity = entities.get(i);
-            if (entity.isRemoved())
-            {
-                entities.remove(i);
-                continue;
-            }
-
-            // Call entity tick
-            entity.tick();
-
-            if (!handleCanMove(entity)) {
-                continue;
-            }
-            handleBulletCollision(entity);
-            handleSupportItem(entity);
-        }
+        tickEntityLayer(entitiesBack);
+        tickEntityLayer(entities);
+        tickEntityLayer(entitiesPop);
     }
 
     /**
@@ -273,9 +286,43 @@ public class StartupLevel extends Level {
      */
     private void paintPanel(Graphics g) {
         g.setColor(Color.YELLOW);
-        g.drawString("Entities: " + entities.size() +
+        g.drawString("Entities: " + (entities.size() + entitiesBack.size() + entitiesPop.size()) +
                 ", Player life: " + player.getHp() +
                 ", Fish skips: " + fishSkips + "/" + maxFishSkips +
                 ", Scores: " + player.getScores(), 10, 15);
+    }
+
+    /**
+     * Paint entity on level
+     * @param g - Graphics
+     * @param entity - Entity
+     */
+    private void paintEntity(Graphics g, Entity entity) {
+        Image image = entity.getImage();
+        if (image != null) {
+            g.drawImage(image, entity.getX(), entity.getY(), null);
+        }
+    }
+
+    /**
+     * Tick entity layer
+     * @param entityList - List<Entity>
+     */
+    private void tickEntityLayer(List<Entity> entityList) {
+        for (int i = 0; i < entityList.size(); ++i) {
+            Entity entity = entityList.get(i);
+            if (entity.isRemoved())
+            {
+                entityList.remove(i);
+                continue;
+            }
+
+            // Call entity tick
+            entity.tick();
+
+            handleCanMove(entity);
+            handleBulletCollision(entity);
+            handleSupportItem(entity);
+        }
     }
 }

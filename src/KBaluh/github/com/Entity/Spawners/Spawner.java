@@ -14,9 +14,11 @@ public abstract class Spawner extends Entity {
 
     private int spawnInterval = 60;
     private int freezeTime = 0;
+    private EntityLayer layer;
 
-    public Spawner(int x, int y, int spawnInterval) {
+    public Spawner(int x, int y, int spawnInterval, EntityLayer layer) {
         this.spawnInterval = spawnInterval;
+        this.layer = layer;
         setX(x);
         setY(y);
     }
@@ -46,8 +48,16 @@ public abstract class Spawner extends Entity {
     public void onKeyUp(KeyEvent e) {
     }
 
-    private void spawn() {
-        level.addEntity(getEntity());
+    public void spawn() {
+        if (layer == EntityLayer.Back) {
+            level.addEntityBack(getEntity());
+        } else
+        if (layer == EntityLayer.General) {
+            level.addEntity(getEntity());
+        } else
+        if (layer == EntityLayer.Pop) {
+            level.addEntityPop(getEntity());
+        }
         afterSpawn();
     }
 
