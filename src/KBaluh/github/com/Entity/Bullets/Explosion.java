@@ -36,8 +36,7 @@ public class Explosion extends Entity {
                 currentFrame++;
                 currentTick = 0;
             } else {
-                level.removeEntity((Entity) expolosionEntity);
-                level.removeEntity(this);
+                remove();
             }
         } else {
             currentTick++;
