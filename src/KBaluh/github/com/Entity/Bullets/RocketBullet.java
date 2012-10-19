@@ -48,16 +48,15 @@ public class RocketBullet extends Bullet implements IExplosion {
         if (currentTick <= ticks) {
             currentTick++;
         } else {
-            int y = random.nextInt(15);
+            int y = random.nextInt(30);
             RocketBubble bubble = new RocketBubble(getX(), getY() + y, BubbleType.Small);
             level.addEntity(bubble);
-
             currentTick = 0;
         }
     }
 
     public Image getImage() {
-        if (isHis()) {
+        if (isHit()) {
             return null;
         }
         if (dir == Direction.LEFT) {

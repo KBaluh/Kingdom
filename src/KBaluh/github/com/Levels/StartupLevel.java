@@ -228,14 +228,14 @@ public class StartupLevel extends Level {
                     if (mob.haveCollision(bullet)) {
                         mob.hurt(bullet.getDamage());
                         bullet.hit();
+                        removeEntity(bullet);
 
                         if (bullet instanceof IExplosion) {
                             addEntity(new Explosion((IExplosion) bullet,
                                     bullet.getX(),
                                     bullet.getY()));
-                        } else {
-                            removeEntity(bullet);
                         }
+
                         if (!mob.isLive()) {
                             if (!(mob instanceof Player)) {
                                 removeEntity(mob);

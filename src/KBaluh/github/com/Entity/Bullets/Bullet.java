@@ -43,7 +43,7 @@ public abstract class Bullet extends Entity {
         isHit = true;
     }
 
-    public boolean isHis() {
+    public boolean isHit() {
         return isHit;
     }
 
