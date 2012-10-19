@@ -15,7 +15,7 @@ public class BubbleSpawner extends Spawner {
     private static int spawnInterval = 20;
 
     public BubbleSpawner() {
-        super(0, 0, spawnInterval);
+        super(0, 0, spawnInterval, EntityLayer.Back);
     }
 
     public Entity getEntity() {
@@ -33,6 +33,25 @@ public class BubbleSpawner extends Spawner {
         return new Bubble(random.nextInt(level.getScreenWidth()),
                 level.getScreenHeight(),
                 bubbleSpeed, bubbleType);
+    }
+
+    @Override
+    public void spawn() {
+        Bubble bubble = (Bubble) getEntity();
+        if (bubble.type == BubbleType.Small) {
+            level.addEntityBack(bubble);
+        } else
+        if (bubble.type == BubbleType.Middle) {
+            if (new Random().nextBoolean()) {
+                level.addEntityPop(bubble);
+            } else {
+                level.addEntityBack(bubble);
+            }
+        } else
+        if (bubble.type == BubbleType.Big) {
+            level.addEntityPop(bubble);
+        }
+        afterSpawn();
     }
 
     public void afterSpawn() {
