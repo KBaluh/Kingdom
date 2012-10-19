@@ -84,6 +84,15 @@ public class StartupLevel extends Level {
     }
 
     /**
+     * Spawner layer
+     * @param spawner - Entity spawner
+     */
+    public void addSpawner(Spawner spawner) {
+        spawners.add(spawner);
+        spawner.init(this);
+    }
+
+    /**
      * Add entity on entities list and init entity level
      * @param entity - see Entity
      */
@@ -274,15 +283,6 @@ public class StartupLevel extends Level {
      */
     private boolean isGame() {
         return (player.isLive() && (fishSkips <= maxFishSkips));
-    }
-
-    /**
-     * Spawner layer
-     * @param spawner - Entity spawner
-     */
-    private void addSpawner(Spawner spawner) {
-        spawners.add(spawner);
-        spawner.init(this);
     }
 
     /**

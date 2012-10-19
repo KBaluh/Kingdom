@@ -1,6 +1,7 @@
 package KBaluh.github.com.Levels;
 
 import KBaluh.github.com.Entity.Entity;
+import KBaluh.github.com.Entity.Spawners.Spawner;
 import KBaluh.github.com.GameScreen;
 
 import java.awt.*;
@@ -29,6 +30,7 @@ public abstract class Level implements Runnable {
     public void run() {
     }
 
+    public abstract void addSpawner(Spawner spawner);
     public abstract void addEntityBack(Entity entity);
     public abstract void addEntity(Entity entity);
     public abstract void addEntityPop(Entity entity);
