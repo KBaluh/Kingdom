@@ -35,9 +35,7 @@ public class HunterFish extends Mob implements ActionListener {
         setDir(dir);
         setSpeed(fishSpeed);
 
-        int offsetX = -65;
-        int offsetY = 55;
-        Weapon weapon = new RocketGun(this, offsetX, offsetY);
+        Weapon weapon = new RocketGun(this);
         setWeapon(weapon);
 
         initShootTimer();

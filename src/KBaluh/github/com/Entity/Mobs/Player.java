@@ -24,9 +24,7 @@ public class Player extends Mob {
 
     public Player(int x, int y) {
         super(x, y, startHp, Team.TeamOne);
-        int offsetX = 65;
-        int offsetY = 55;
-        RocketGun weapon = new RocketGun(this, offsetX, offsetY);
+        RocketGun weapon = new RocketGun(this);
         setWeapon(weapon);
         setDir(Direction.RIGHT);
         setSpeed(startSpeed);

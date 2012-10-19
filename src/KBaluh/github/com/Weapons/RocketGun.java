@@ -1,6 +1,7 @@
 package KBaluh.github.com.Weapons;
 
 import KBaluh.github.com.Entity.Bullets.RocketBullet;
+import KBaluh.github.com.Entity.Direction;
 import KBaluh.github.com.Entity.Mobs.Mob;
 
 /**
@@ -10,22 +11,28 @@ import KBaluh.github.com.Entity.Mobs.Mob;
 public class RocketGun extends Weapon {
 
     private static int shootDelay = 30;
-    private int offsetX = 65;
-    private int offsetY = 55;
 
-    public RocketGun(Mob mob, int offsetX, int offsetY) {
+    public RocketGun(Mob mob) {
         super(mob, shootDelay);
-        this.offsetX = offsetX;
-        this.offsetY = offsetY;
     }
 
     public void useWeapon() {
         if (canShoot) {
             canShoot = false;
 
-            RocketBullet bullet = new RocketBullet(mob.getX() + offsetX,
-                    mob.getY() + offsetY,
+            int offsetX = -(mob.getImageWidth());
+            int offsetY = -(mob.getImageHeight() / 2);
+
+            if (mob.getDir() == Direction.LEFT) {
+                offsetX -= offsetX;
+            } else {
+                offsetX += 40;
+            }
+
+            RocketBullet bullet = new RocketBullet(mob.getX() - offsetX,
+                    mob.getY() - offsetY,
                     mob.getDir(), mob.getTeam());
+            bullet.setX(bullet.getX() + bullet.getImageWidth());
             mob.level.addEntity(bullet);
         }
     }
