@@ -64,7 +64,7 @@ public class StartupLevel extends Level {
     /**
      * Need kill mobs, for next level
      */
-    private int maxKills = 20;
+    private int maxKills = 10;
 
     /**
      * Current level on level
@@ -96,7 +96,7 @@ public class StartupLevel extends Level {
     }
 
     public boolean levelIsDone() {
-        return  (levelCount >= 2);
+        return  (levelCount > 3);
     }
 
     public void levelStop() {
@@ -201,7 +201,6 @@ public class StartupLevel extends Level {
         }
 
         if (victoryCondition.isVictory()) {
-            maxFishSkipped = maxFishSkipped * 2;
             maxKills = maxKills * 2;
             ++levelCount;
             victoryCondition.initCondition(maxFishSkipped, maxKills);
