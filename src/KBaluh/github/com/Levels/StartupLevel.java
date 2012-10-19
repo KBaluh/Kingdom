@@ -57,14 +57,24 @@ public class StartupLevel extends Level {
     private Player player;
 
     /**
-     * Level victory conditions: max skips fish
+     * Count for current level maximum fish skipped
      */
-    private int maxFishSkips = 10;
+    private int maxFishSkipped = 10;
 
     /**
-     * Level victory condition: player skips fish count
+     * Need kill mobs, for next level
      */
-    private int fishSkips = 0;
+    private int maxKills = 20;
+
+    /**
+     * Current level on level
+     */
+    private int levelCount = 1;
+
+    /**
+     * Victory conditions for level
+     */
+    private VictoryCondition victoryCondition = new VictoryCondition();
 
     /**
      * Constructor
@@ -72,6 +82,8 @@ public class StartupLevel extends Level {
      */
     public StartupLevel(GameScreen gameScreen) {
         super(gameScreen);
+
+        victoryCondition.initCondition(maxFishSkipped, maxKills);
 
         int playerX = 300;
         int playerY = 200;
@@ -161,9 +173,16 @@ public class StartupLevel extends Level {
 
     @Override
     public void tick() {
-        if (!isGame()) {
+        if (victoryCondition.playerFail() || player.getHp() <= 0) {
             JOptionPane.showMessageDialog(null, "Game over, your scores: " + player.getScores());
             System.exit(1);
+        }
+
+        if (victoryCondition.isVictory()) {
+            maxFishSkipped = maxFishSkipped * 2;
+            maxKills = maxKills * 2;
+            ++levelCount;
+            victoryCondition.initCondition(maxFishSkipped, maxKills);
         }
 
         for (int s = 0; s < spawners.size(); ++s) {
@@ -215,7 +234,7 @@ public class StartupLevel extends Level {
             if (!canMoveMob(entity.getX(), entity.getY(),
                     entity.getImageWidth(), entity.getImageHeight())) {
                 if (entity instanceof Mob) {
-                    fishSkips++;
+                    victoryCondition.addSkippedFish();
                 }
                 removeEntity(entity);
                 result = false;
@@ -267,6 +286,7 @@ public class StartupLevel extends Level {
                         if (!mob.isLive()) {
                             if (!(mob instanceof Player)) {
                                 player.addScores(mob.getScores());
+                                victoryCondition.addKill();
                                 removeEntity(mob);
                             }
                         }
@@ -278,23 +298,18 @@ public class StartupLevel extends Level {
     }
 
     /**
-     * Level condition to game.
-     * @return if continue game - return true
-     */
-    private boolean isGame() {
-        return (player.isLive() && (fishSkips <= maxFishSkips));
-    }
-
-    /**
      * Draw information panel after all entities draw
      * @param g - graphics for paint
      */
     private void paintPanel(Graphics g) {
         g.setColor(Color.YELLOW);
         g.drawString("Entities: " + (entities.size() + entitiesBack.size() + entitiesPop.size()) +
+                ", Level: " + levelCount +
                 ", Player life: " + player.getHp() +
-                ", Fish skips: " + fishSkips + "/" + maxFishSkips +
-                ", Scores: " + player.getScores(), 10, 15);
+                ", Fish skips: " + victoryCondition.getFishSkipped() + "/" + victoryCondition.getMaxFishSkipped() +
+                ", Killed: " + victoryCondition.getKillCount() + "/" + victoryCondition.getMaxKillCount() +
+                ", Scores: " + player.getScores()
+                , 10, 15);
     }
 
     /**
