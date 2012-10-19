@@ -1,5 +1,6 @@
 package KBaluh.github.com.Entity.Bullets;
 
+import KBaluh.github.com.Art;
 import KBaluh.github.com.Entity.Decorations.BubbleType;
 import KBaluh.github.com.Entity.Decorations.RocketBubble;
 import KBaluh.github.com.Entity.Direction;
@@ -16,8 +17,8 @@ import java.util.Random;
  */
 public class RocketBullet extends Bullet implements IExplosion {
 
-    private Image bulletLeft = new ImageIcon("res/RocketBulletLeft.png").getImage();
-    private Image bulletRight = new ImageIcon("res/RocketBulletRight.png").getImage();
+    private Image bulletLeft = Art.rocketBulletLeft;
+    private Image bulletRight = Art.rocketBulletRight;
     private Image image = bulletLeft;
 
     private static int speed = 1;
@@ -36,11 +37,11 @@ public class RocketBullet extends Bullet implements IExplosion {
         super(x, y, speed, dir, damage, team);
         this.dir = dir;
 
-        explosions.add(new ImageIcon("res/expl1.png").getImage());
-        explosions.add(new ImageIcon("res/expl2.png").getImage());
-        explosions.add(new ImageIcon("res/expl3.png").getImage());
-        explosions.add(new ImageIcon("res/expl4.png").getImage());
-        explosions.add(new ImageIcon("res/expl5.png").getImage());
+        explosions.add(Art.rocketBulletExplosion1);
+        explosions.add(Art.rocketBulletExplosion2);
+        explosions.add(Art.rocketBulletExplosion3);
+        explosions.add(Art.rocketBulletExplosion4);
+        explosions.add(Art.rocketBulletExplosion5);
     }
 
     public void tick() {

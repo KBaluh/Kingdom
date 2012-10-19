@@ -1,5 +1,6 @@
 package KBaluh.github.com.Levels;
 
+import KBaluh.github.com.Art;
 import KBaluh.github.com.Entity.Bullets.Bullet;
 import KBaluh.github.com.Entity.Bullets.Explosion;
 import KBaluh.github.com.Entity.Bullets.IExplosion;
@@ -28,7 +29,7 @@ public class StartupLevel extends Level {
     /**
      * Image for paint background
      */
-    private Image background = new ImageIcon("res/background.jpg").getImage();
+    private Image background = Art.background;
 
     /**
      * All entities on level

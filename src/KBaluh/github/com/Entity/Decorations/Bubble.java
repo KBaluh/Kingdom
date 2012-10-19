@@ -1,5 +1,6 @@
 package KBaluh.github.com.Entity.Decorations;
 
+import KBaluh.github.com.Art;
 import KBaluh.github.com.Entity.Entity;
 
 import javax.swing.*;
@@ -12,9 +13,9 @@ import java.awt.event.KeyEvent;
  */
 public class Bubble extends Entity {
 
-    private Image imageSmall = new ImageIcon("res/bubble_small.png").getImage();
-    private Image imageMiddle = new ImageIcon("res/bubble_middle.png").getImage();
-    private Image imageBig = new ImageIcon("res/bubble_large.png").getImage();
+    private Image imageSmall = Art.bubbleSmall;
+    private Image imageMiddle = Art.bubbleMiddle;
+    private Image imageBig = Art.bubbleLarge;
     private Image image;
 
     private int x;
