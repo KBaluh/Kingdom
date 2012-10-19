@@ -5,7 +5,6 @@ import KBaluh.github.com.Entity.Direction;
 import KBaluh.github.com.Entity.Team;
 import KBaluh.github.com.Weapons.RocketGun;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 
@@ -25,7 +24,9 @@ public class Player extends Mob {
 
     public Player(int x, int y) {
         super(x, y, startHp, Team.TeamOne);
-        RocketGun weapon = new RocketGun(this);
+        int offsetX = 65;
+        int offsetY = 55;
+        RocketGun weapon = new RocketGun(this, offsetX, offsetY);
         setWeapon(weapon);
         setDir(Direction.RIGHT);
         setSpeed(startSpeed);
