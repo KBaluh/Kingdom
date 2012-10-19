@@ -122,4 +122,5 @@ public abstract class Mob extends Entity implements IBonusReceiver {
     }
 
     public abstract Image getImage();
+    public abstract int getScores();
 }

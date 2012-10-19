@@ -121,7 +121,7 @@ public class StartupLevel extends Level {
     @Override
     public void tick() {
         if (!isGame()) {
-            JOptionPane.showMessageDialog(null, "You lose!");
+            JOptionPane.showMessageDialog(null, "Game over, your scores: " + player.getScores());
             System.exit(1);
         }
 
@@ -239,6 +239,7 @@ public class StartupLevel extends Level {
 
                         if (!mob.isLive()) {
                             if (!(mob instanceof Player)) {
+                                player.addScores(mob.getScores());
                                 removeEntity(mob);
                             }
                         }
@@ -274,6 +275,7 @@ public class StartupLevel extends Level {
         g.setColor(Color.YELLOW);
         g.drawString("Entities: " + entities.size() +
                 ", Player life: " + player.getHp() +
-                ", Fish skips: " + fishSkips + "/" + maxFishSkips, 10, 15);
+                ", Fish skips: " + fishSkips + "/" + maxFishSkips +
+                ", Scores: " + player.getScores(), 10, 15);
     }
 }
