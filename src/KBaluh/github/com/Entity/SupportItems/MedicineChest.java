@@ -1,5 +1,6 @@
 package KBaluh.github.com.Entity.SupportItems;
 
+import KBaluh.github.com.Art;
 import KBaluh.github.com.Levels.Level;
 
 import javax.swing.*;
@@ -11,7 +12,7 @@ import java.awt.*;
  */
 public class MedicineChest extends SupportItem {
 
-    private Image image = new ImageIcon("res/MedicineChest.png").getImage();
+    private Image image = Art.medicineChest;
 
     private static int speed = 3;
 

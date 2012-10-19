@@ -1,5 +1,6 @@
 package KBaluh.github.com.Entity.Mobs;
 
+import KBaluh.github.com.Art;
 import KBaluh.github.com.Entity.Direction;
 import KBaluh.github.com.Entity.Team;
 import KBaluh.github.com.Weapons.RocketGun;
@@ -13,8 +14,8 @@ import java.awt.event.KeyEvent;
  * Date: 16.10.12:18:57
  */
 public class Player extends Mob {
-    private Image imageLeft = new ImageIcon("res/player_left.png").getImage();
-    private Image imageRight = new ImageIcon("res/player_right.png").getImage();
+    private Image imageLeft = Art.playerLeft;
+    private Image imageRight = Art.playerRight;
     private Image image = imageRight;
 
     private static final float startHp = 100;

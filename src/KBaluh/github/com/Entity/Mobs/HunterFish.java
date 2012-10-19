@@ -1,5 +1,6 @@
 package KBaluh.github.com.Entity.Mobs;
 
+import KBaluh.github.com.Art;
 import KBaluh.github.com.Entity.Direction;
 import KBaluh.github.com.Entity.Team;
 import KBaluh.github.com.Weapons.RocketGun;
@@ -18,8 +19,8 @@ import java.util.Random;
  */
 public class HunterFish extends Mob implements ActionListener {
 
-    private Image imageLeft = new ImageIcon("res/hunterFishLeft.png").getImage();
-    private Image imageRight = new ImageIcon("res/hunterFishRight.png").getImage();
+    private Image imageLeft = Art.hunterFishLeft;
+    private Image imageRight = Art.hunterFishRight;
 
     private final int fishSpeed = 2;
 
