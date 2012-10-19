@@ -28,6 +28,8 @@ public class HunterFish extends Mob implements ActionListener {
 
     private static final float hp = 20;
 
+    private int scores = 8;
+
     public HunterFish(int x, int y, Direction dir) {
         super(x, y, hp, Team.TeamTwo);
         setDir(dir);
@@ -37,6 +39,13 @@ public class HunterFish extends Mob implements ActionListener {
         setWeapon(weapon);
 
         initShootTimer();
+    }
+
+    public int getScores() {
+        if (isRemoved()) {
+            return 0;
+        }
+        return scores + (new Random().nextInt(scores / 2));
     }
 
     public void actionPerformed(ActionEvent e) {
