@@ -3,7 +3,6 @@ package KBaluh.github.com.Entity;
 import KBaluh.github.com.Levels.Level;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 
 /**
  * User: KBaluh
@@ -79,6 +78,4 @@ public abstract class Entity {
 
     public abstract Image getImage();
     public abstract void tick();
-    public abstract void onKeyDown(KeyEvent e);
-    public abstract void onKeyUp(KeyEvent e);
 }

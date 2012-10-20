@@ -83,10 +83,4 @@ public class HunterFish extends Mob implements ActionListener {
             return  imageRight;
         }
     }
-
-    public void onKeyDown(KeyEvent e) {
-    }
-
-    public void onKeyUp(KeyEvent e) {
-    }
 }

@@ -10,7 +10,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.util.Random;
 
 /**
@@ -82,11 +81,5 @@ public class GreenFish extends Mob implements ActionListener {
         } else {
             return  imageRight;
         }
-    }
-
-    public void onKeyDown(KeyEvent e) {
-    }
-
-    public void onKeyUp(KeyEvent e) {
     }
 }
