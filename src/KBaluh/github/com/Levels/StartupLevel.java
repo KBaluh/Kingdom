@@ -69,7 +69,7 @@ public class StartupLevel extends Level {
     /**
      * Current level on level
      */
-    private int levelCount = 1;
+    private int battleNumber = 1;
 
     /**
      * Maximum levels on level
@@ -97,7 +97,7 @@ public class StartupLevel extends Level {
      * @return
      */
     public boolean levelIsDone() {
-        return (levelCount > 3);
+        return (battleNumber > 3);
     }
 
     /**
@@ -230,18 +230,18 @@ public class StartupLevel extends Level {
      * Event of level is victory
      */
     protected void victory() {
-        if (levelCount <= maxLevelCount) {
+        if (battleNumber <= maxLevelCount) {
             maxKills = maxKills * 2;
-            ++levelCount;
+            ++battleNumber;
         }
 
         for (int i = 0; i < spawners.size(); ++i) {
             if (spawners.get(i) instanceof HunterFishSpawner) {
                 Spawner spawner = spawners.get(i);
-                if (levelCount == 2) {
+                if (battleNumber == 2) {
                     spawner.setBaseInterval(spawner.getBaseInterval() - 20);
                 } else
-                if (levelCount == 3) {
+                if (battleNumber == 3) {
                     spawner.setBaseInterval(spawner.getBaseInterval() - 20);
                 }
             }
@@ -281,14 +281,37 @@ public class StartupLevel extends Level {
      * @param g - graphics for paint
      */
     protected void paintPanel(Graphics g) {
-        g.setColor(Color.YELLOW);
-        g.drawString("Entities: " + (entities.size() + entitiesBack.size() + entitiesPop.size()) +
-                ", Level: " + levelCount +
-                ", Player life: " + player.getHp() +
-                ", Fish skips: " + victoryCondition.getFishSkipped() + "/" + victoryCondition.getMaxFishSkipped() +
-                ", Killed: " + victoryCondition.getKillCount() + "/" + victoryCondition.getMaxKillCount() +
-                ", Scores: " + player.getScores()
-                , 10, 15);
+        int fontSize = 14;
+        Font font = new Font("Arial", Font.BOLD, fontSize);
+        g.setFont(font);
+
+        Color color = Color.WHITE;
+        g.setColor(color);
+
+        g.drawString("Level: " + getLevelNumber() + ", Battle: " + battleNumber +
+                ", Missed fish: " + victoryCondition.getFishSkipped() + "/" + victoryCondition.getMaxFishSkipped() +
+                ", Killed fish: " + victoryCondition.getKillCount() + "/" + victoryCondition.getMaxKillCount() +
+                ", Scores: " + player.getScores(), 10, 20);
+
+        float maxHp = player.getMaxHp();
+        float hp = player.getHp();
+
+        if (hp <= (maxHp * 80 / 100)) {
+            color = Color.YELLOW;
+        }
+        if (hp <= (maxHp * 30 / 100)) {
+            color = Color.RED;
+        }
+        g.setColor(color);
+
+        g.drawString("Player life: " + player.getHp(), 10, 35);
+    }
+
+    /**
+     * @return Return level number
+     */
+    public int getLevelNumber() {
+        return 1;
     }
 
     /**

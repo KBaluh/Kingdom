@@ -20,9 +20,6 @@ public class LevelTwo extends StartupLevel {
     @Override
     protected void paintPanel(Graphics g) {
         super.paintPanel(g);
-        int x = 10;
-        int y = 30;
-        g.drawString("Level 2", x, y);
     }
 
     @Override
@@ -50,5 +47,10 @@ public class LevelTwo extends StartupLevel {
     @Override
     protected void victory() {
         super.victory();
+    }
+
+    @Override
+    public int getLevelNumber() {
+        return 2;
     }
 }
