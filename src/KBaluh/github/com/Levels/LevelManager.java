@@ -19,7 +19,7 @@ public class LevelManager {
     }
 
     public boolean isNext() {
-        return  (index + 1 < levels.size());
+        return (index + 1 < levels.size());
     }
 
     public Level next() {
@@ -35,5 +35,6 @@ public class LevelManager {
         levels.clear();
 
         levels.add(new StartupLevel(screen));
+        levels.add(new LevelTwo(screen));
     }
 }

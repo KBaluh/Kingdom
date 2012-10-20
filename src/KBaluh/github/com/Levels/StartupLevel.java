@@ -64,7 +64,7 @@ public class StartupLevel extends Level {
     /**
      * Need kill mobs, for next level
      */
-    private int maxKills = 10;
+    private int maxKills = 5;
 
     /**
      * Current level on level
@@ -79,7 +79,7 @@ public class StartupLevel extends Level {
     /**
      * Victory conditions for level
      */
-    private VictoryCondition victoryCondition = new VictoryCondition();
+    protected VictoryCondition victoryCondition = new VictoryCondition();
 
     /**
      * Constructor
@@ -87,17 +87,9 @@ public class StartupLevel extends Level {
      */
     public StartupLevel(GameScreen gameScreen) {
         super(gameScreen);
-
-        victoryCondition.initCondition(maxFishSkipped, maxKills);
-
-        int playerX = 300;
-        int playerY = 200;
-        player = new Player(playerX, playerY);
-        addEntity(player);
-
-        addSpawner(new BubbleSpawner());
-        addSpawner(new HunterFishSpawner());
-        addSpawner(new SupportItemSpawner());
+        initVictoryCondition();
+        initPlayer();
+        initSpawners();
     }
 
     /**
@@ -210,25 +202,7 @@ public class StartupLevel extends Level {
         }
 
         if (victoryCondition.isVictory()) {
-
-            if (levelCount + 1 <= maxLevelCount) {
-                maxKills = maxKills * 2;
-                ++levelCount;
-            }
-
-            for (int i = 0; i < spawners.size(); ++i) {
-                if (spawners.get(i) instanceof HunterFishSpawner) {
-                    Spawner spawner = spawners.get(i);
-                    if (levelCount == 2) {
-                        spawner.setInterval(spawner.getInterval() - 20);
-                    } else
-                    if (levelCount == 3) {
-                        spawner.setInterval(spawner.getInterval() - 20);
-                    }
-                }
-            }
-
-            victoryCondition.initCondition(maxFishSkipped, maxKills);
+            victory();
         }
 
         for (int s = 0; s < spawners.size(); ++s) {
@@ -239,6 +213,82 @@ public class StartupLevel extends Level {
         tickDecorationLayer(entitiesBack);
         tickEntityLayer(entities);
         tickDecorationLayer(entitiesPop);
+    }
+
+    /**
+     * Remove old and set new player on level.
+     * Add player on entities list
+     * @param player - new player
+     */
+    protected void setPlayer(Player player) {
+        entities.remove(this.player);
+        addEntity(player);
+        this.player = player;
+    }
+
+    /**
+     * Event of level is victory
+     */
+    protected void victory() {
+        if (levelCount <= maxLevelCount) {
+            maxKills = maxKills * 2;
+            ++levelCount;
+        }
+
+        for (int i = 0; i < spawners.size(); ++i) {
+            if (spawners.get(i) instanceof HunterFishSpawner) {
+                Spawner spawner = spawners.get(i);
+                if (levelCount == 2) {
+                    spawner.setBaseInterval(spawner.getBaseInterval() - 20);
+                } else
+                if (levelCount == 3) {
+                    spawner.setBaseInterval(spawner.getBaseInterval() - 20);
+                }
+            }
+        }
+
+        victoryCondition.initCondition(maxFishSkipped, maxKills);
+    }
+
+    /**
+     * Init spawners on level
+     */
+    protected void initSpawners() {
+        addSpawner(new BubbleSpawner());
+        addSpawner(new HunterFishSpawner());
+        addSpawner(new SupportItemSpawner());
+    }
+
+    /**
+     * Init player for level
+     */
+    protected void initPlayer() {
+        int playerX = 100;
+        int playerY = 200;
+        Player player = new Player(playerX, playerY);
+        setPlayer(player);
+    }
+
+    /**
+     * Init victory conditions for level
+     */
+    protected void initVictoryCondition() {
+        victoryCondition.initCondition(maxFishSkipped, maxKills);
+    }
+
+    /**
+     * Draw information panel after all entities draw
+     * @param g - graphics for paint
+     */
+    protected void paintPanel(Graphics g) {
+        g.setColor(Color.YELLOW);
+        g.drawString("Entities: " + (entities.size() + entitiesBack.size() + entitiesPop.size()) +
+                ", Level: " + levelCount +
+                ", Player life: " + player.getHp() +
+                ", Fish skips: " + victoryCondition.getFishSkipped() + "/" + victoryCondition.getMaxFishSkipped() +
+                ", Killed: " + victoryCondition.getKillCount() + "/" + victoryCondition.getMaxKillCount() +
+                ", Scores: " + player.getScores()
+                , 10, 15);
     }
 
     /**
@@ -341,21 +391,6 @@ public class StartupLevel extends Level {
                 }
             }
         }
-    }
-
-    /**
-     * Draw information panel after all entities draw
-     * @param g - graphics for paint
-     */
-    private void paintPanel(Graphics g) {
-        g.setColor(Color.YELLOW);
-        g.drawString("Entities: " + (entities.size() + entitiesBack.size() + entitiesPop.size()) +
-                ", Level: " + levelCount +
-                ", Player life: " + player.getHp() +
-                ", Fish skips: " + victoryCondition.getFishSkipped() + "/" + victoryCondition.getMaxFishSkipped() +
-                ", Killed: " + victoryCondition.getKillCount() + "/" + victoryCondition.getMaxKillCount() +
-                ", Scores: " + player.getScores()
-                , 10, 15);
     }
 
     /**
