@@ -33,7 +33,7 @@ public class LevelTwo extends StartupLevel {
         addSpawner(new HunterFishSpawner());
 
         GreenFishSpawner greenFishSpawner = new GreenFishSpawner();
-        greenFishSpawner.setBaseInterval(340);
+        greenFishSpawner.setBaseInterval(400);
         addSpawner(greenFishSpawner);
     }
 
