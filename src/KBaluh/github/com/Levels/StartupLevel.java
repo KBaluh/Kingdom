@@ -228,9 +228,9 @@ public class StartupLevel extends Level {
             spawner.tick();
         }
 
-        tickEntityLayer(entitiesBack);
+        tickDecorationLayer(entitiesBack);
         tickEntityLayer(entities);
-        tickEntityLayer(entitiesPop);
+        tickDecorationLayer(entitiesPop);
     }
 
     /**
@@ -381,6 +381,24 @@ public class StartupLevel extends Level {
             handleCanMove(entity);
             handleBulletCollision(entity);
             handleSupportItem(entity);
+        }
+    }
+
+    /**
+     * Decoration layer is pop and back
+     * @param entityList
+     */
+    private void tickDecorationLayer(List<Entity> entityList) {
+        for (int i = 0; i < entityList.size(); ++i) {
+            Entity entity = entityList.get(i);
+            if (entity.isRemoved())
+            {
+                entityList.remove(i);
+                continue;
+            }
+
+            entity.tick();
+            handleCanMove(entity);
         }
     }
 }
