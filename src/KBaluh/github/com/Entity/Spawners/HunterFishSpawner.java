@@ -12,7 +12,7 @@ import java.util.Random;
  */
 public class HunterFishSpawner extends Spawner {
 
-    private static int baseInterval = 110;
+    private int baseInterval = 110;
     private int interval = baseInterval;
 
     public HunterFishSpawner() {
@@ -26,16 +26,24 @@ public class HunterFishSpawner extends Spawner {
         return new HunterFish(x, y, Direction.LEFT);
     }
 
-    public void afterSpawn() {
-        generateSpawnInterval(baseInterval, interval / 2);
-        System.out.println(getInterval());
-    }
-
     public void setInterval(int interval) {
         this.interval = interval;
     }
 
     public int getInterval() {
         return interval;
+    }
+
+    public int getBaseInterval() {
+        return baseInterval;
+    }
+
+    public void setBaseInterval(int baseInterval) {
+        this.baseInterval = baseInterval;
+    }
+
+    @Override
+    public void afterSpawn() {
+        generateSpawnInterval(baseInterval, baseInterval / 2);
     }
 }

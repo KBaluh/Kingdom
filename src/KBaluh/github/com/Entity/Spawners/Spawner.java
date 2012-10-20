@@ -64,9 +64,11 @@ public abstract class Spawner extends Entity {
     }
 
     public void afterSpawn() {
+        generateSpawnInterval(getBaseInterval(), getBaseInterval() / 2);
     }
 
     public abstract int getInterval();
-
     public abstract void setInterval(int interval);
+    public abstract int getBaseInterval();
+    public abstract void setBaseInterval(int baseInterval);
 }

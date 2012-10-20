@@ -36,7 +36,6 @@ public class BubbleSpawner extends Spawner {
                 bubbleSpeed, bubbleType);
     }
 
-    @Override
     public void spawn() {
         Bubble bubble = (Bubble) getEntity();
         if (bubble.type == BubbleType.Small) {
@@ -55,15 +54,19 @@ public class BubbleSpawner extends Spawner {
         afterSpawn();
     }
 
-    public void afterSpawn() {
-        generateSpawnInterval(baseInterval, interval);
-    }
-
     public int getInterval() {
         return interval;
     }
 
     public void setInterval(int interval) {
         this.interval = interval;
+    }
+
+    public int getBaseInterval() {
+        return baseInterval;
+    }
+
+    public void setBaseInterval(int baseInterval) {
+        this.baseInterval = baseInterval;
     }
 }

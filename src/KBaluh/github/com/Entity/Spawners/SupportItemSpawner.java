@@ -22,10 +22,6 @@ public class SupportItemSpawner extends Spawner {
         return getRandomEntity();
     }
 
-    public void afterSpawn() {
-        generateSpawnInterval(baseInterval, interval * 2);
-    }
-
     private Entity getRandomEntity() {
         Random random = new Random();
         int x = random.nextInt(level.getScreenWidth());
@@ -38,5 +34,13 @@ public class SupportItemSpawner extends Spawner {
 
     public int getInterval() {
         return interval;
+    }
+
+    public int getBaseInterval() {
+        return baseInterval;
+    }
+
+    public void setBaseInterval(int baseInterval) {
+        this.baseInterval = baseInterval;
     }
 }
