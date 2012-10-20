@@ -18,7 +18,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -32,13 +31,19 @@ public class StartupLevel extends Level {
      */
     private Image background = Art.background;
 
+    /**
+     * Entities on back layer
+     */
     private List<Entity> entitiesBack = new ArrayList<Entity>();
 
     /**
-     * All entities on level
+     * Entities on center layer
      */
     private List<Entity> entities = new ArrayList<Entity>();
 
+    /**
+     * Entities on pop layer
+     */
     private List<Entity> entitiesPop = new ArrayList<Entity>();
 
     /**
@@ -52,14 +57,29 @@ public class StartupLevel extends Level {
     private Player player;
 
     /**
-     * Level victory conditions: max skips fish
+     * Count for current level maximum fish skipped
      */
-    private int maxFishSkips = 10;
+    private int maxFishSkipped = 10;
 
     /**
-     * Level victory condition: player skips fish count
+     * Need kill mobs, for next level
      */
-    private int fishSkips = 0;
+    private int maxKills = 10;
+
+    /**
+     * Current level on level
+     */
+    private int levelCount = 1;
+
+    /**
+     * Maximum levels on level
+     */
+    private int maxLevelCount = 3;
+
+    /**
+     * Victory conditions for level
+     */
+    private VictoryCondition victoryCondition = new VictoryCondition();
 
     /**
      * Constructor
@@ -67,6 +87,8 @@ public class StartupLevel extends Level {
      */
     public StartupLevel(GameScreen gameScreen) {
         super(gameScreen);
+
+        victoryCondition.initCondition(maxFishSkipped, maxKills);
 
         int playerX = 300;
         int playerY = 200;
@@ -76,6 +98,33 @@ public class StartupLevel extends Level {
         addSpawner(new BubbleSpawner());
         addSpawner(new HunterFishSpawner());
         addSpawner(new SupportItemSpawner());
+    }
+
+    /**
+     * After 3 levels on level, level is done
+     * @return
+     */
+    public boolean levelIsDone() {
+        return (levelCount > 3);
+    }
+
+    /**
+     * Clear all entities
+     */
+    public void levelStop() {
+        spawners.clear();
+        entities.clear();
+        entitiesBack.clear();
+        entitiesPop.clear();
+    }
+
+    /**
+     * Spawner layer
+     * @param spawner - Entity spawner
+     */
+    public void addSpawner(Spawner spawner) {
+        spawners.add(spawner);
+        spawner.init(this);
     }
 
     /**
@@ -145,11 +194,41 @@ public class StartupLevel extends Level {
         paintPanel(g);
     }
 
+    /**
+     * Return player scores
+     * @return
+     */
+    public int getPlayerScores() {
+        return player.getScores();
+    }
+
     @Override
     public void tick() {
-        if (!isGame()) {
+        if (victoryCondition.playerFail() || player.getHp() <= 0) {
             JOptionPane.showMessageDialog(null, "Game over, your scores: " + player.getScores());
             System.exit(1);
+        }
+
+        if (victoryCondition.isVictory()) {
+
+            if (levelCount + 1 <= maxLevelCount) {
+                maxKills = maxKills * 2;
+                ++levelCount;
+            }
+
+            for (int i = 0; i < spawners.size(); ++i) {
+                if (spawners.get(i) instanceof HunterFishSpawner) {
+                    Spawner spawner = spawners.get(i);
+                    if (levelCount == 2) {
+                        spawner.setInterval(spawner.getInterval() - 20);
+                    } else
+                    if (levelCount == 3) {
+                        spawner.setInterval(spawner.getInterval() - 20);
+                    }
+                }
+            }
+
+            victoryCondition.initCondition(maxFishSkipped, maxKills);
         }
 
         for (int s = 0; s < spawners.size(); ++s) {
@@ -157,9 +236,9 @@ public class StartupLevel extends Level {
             spawner.tick();
         }
 
-        tickEntityLayer(entitiesBack);
+        tickDecorationLayer(entitiesBack);
         tickEntityLayer(entities);
-        tickEntityLayer(entitiesPop);
+        tickDecorationLayer(entitiesPop);
     }
 
     /**
@@ -201,7 +280,7 @@ public class StartupLevel extends Level {
             if (!canMoveMob(entity.getX(), entity.getY(),
                     entity.getImageWidth(), entity.getImageHeight())) {
                 if (entity instanceof Mob) {
-                    fishSkips++;
+                    victoryCondition.addSkippedFish();
                 }
                 removeEntity(entity);
                 result = false;
@@ -253,6 +332,7 @@ public class StartupLevel extends Level {
                         if (!mob.isLive()) {
                             if (!(mob instanceof Player)) {
                                 player.addScores(mob.getScores());
+                                victoryCondition.addKill();
                                 removeEntity(mob);
                             }
                         }
@@ -264,32 +344,18 @@ public class StartupLevel extends Level {
     }
 
     /**
-     * Level condition to game.
-     * @return if continue game - return true
-     */
-    private boolean isGame() {
-        return (player.isLive() && (fishSkips <= maxFishSkips));
-    }
-
-    /**
-     * Spawner layer
-     * @param spawner - Entity spawner
-     */
-    private void addSpawner(Spawner spawner) {
-        spawners.add(spawner);
-        spawner.init(this);
-    }
-
-    /**
      * Draw information panel after all entities draw
      * @param g - graphics for paint
      */
     private void paintPanel(Graphics g) {
         g.setColor(Color.YELLOW);
         g.drawString("Entities: " + (entities.size() + entitiesBack.size() + entitiesPop.size()) +
+                ", Level: " + levelCount +
                 ", Player life: " + player.getHp() +
-                ", Fish skips: " + fishSkips + "/" + maxFishSkips +
-                ", Scores: " + player.getScores(), 10, 15);
+                ", Fish skips: " + victoryCondition.getFishSkipped() + "/" + victoryCondition.getMaxFishSkipped() +
+                ", Killed: " + victoryCondition.getKillCount() + "/" + victoryCondition.getMaxKillCount() +
+                ", Scores: " + player.getScores()
+                , 10, 15);
     }
 
     /**
@@ -323,6 +389,24 @@ public class StartupLevel extends Level {
             handleCanMove(entity);
             handleBulletCollision(entity);
             handleSupportItem(entity);
+        }
+    }
+
+    /**
+     * Decoration layer is pop and back
+     * @param entityList
+     */
+    private void tickDecorationLayer(List<Entity> entityList) {
+        for (int i = 0; i < entityList.size(); ++i) {
+            Entity entity = entityList.get(i);
+            if (entity.isRemoved())
+            {
+                entityList.remove(i);
+                continue;
+            }
+
+            entity.tick();
+            handleCanMove(entity);
         }
     }
 }

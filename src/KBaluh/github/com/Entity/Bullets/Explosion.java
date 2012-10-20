@@ -12,27 +12,27 @@ import java.awt.event.KeyEvent;
 public class Explosion extends Entity {
 
     int currentFrame = 0;
-    private IExplosion expolosionEntity;
+    private IExplosion explosionEntity;
     private Image image;
 
     private int ticks = 0;
     private int currentTick = 0;
 
-    public Explosion(IExplosion expolosionEntity, int x, int y) {
-        this.expolosionEntity = expolosionEntity;
+    public Explosion(IExplosion explosionEntity, int x, int y) {
+        this.explosionEntity = explosionEntity;
 
         int offsetX = 0;
         int offsetY = -60;
         setX(x + offsetX);
         setY(y + offsetY);
 
-        ticks = expolosionEntity.getInterval();
+        ticks = explosionEntity.getInterval();
     }
 
     public void tick() {
         if (currentTick >= ticks) {
-            if (currentFrame < expolosionEntity.getFrames()) {
-                image = expolosionEntity.getImageByFrame(currentFrame);
+            if (currentFrame < explosionEntity.getFrames()) {
+                image = explosionEntity.getImageByFrame(currentFrame);
                 currentFrame++;
                 currentTick = 0;
             } else {

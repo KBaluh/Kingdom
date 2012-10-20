@@ -1,9 +1,7 @@
 package KBaluh.github.com.Entity.SupportItems;
 
 import KBaluh.github.com.Art;
-import KBaluh.github.com.Levels.Level;
 
-import javax.swing.*;
 import java.awt.*;
 
 /**
@@ -16,7 +14,7 @@ public class MedicineChest extends SupportItem {
 
     private static int speed = 3;
 
-    private static int bonus = 75;
+    private static int bonus = 35;
 
     public MedicineChest(int x, int y) {
         super(x, y, speed, bonus);

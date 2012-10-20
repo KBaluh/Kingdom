@@ -17,6 +17,7 @@ public abstract class Weapon {
     public Weapon(Mob owner, int shootDelay) {
         this.mob = owner;
         shootDelays = shootDelay;
+        this.shootDelay = shootDelay;
     }
 
     public void tick() {

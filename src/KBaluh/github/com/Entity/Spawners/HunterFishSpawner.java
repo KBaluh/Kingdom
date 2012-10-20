@@ -12,10 +12,10 @@ import java.util.Random;
  */
 public class HunterFishSpawner extends Spawner {
 
-    private static int spawnInterval = 80;
+    private static int baseInterval = 110;
 
     public HunterFishSpawner() {
-        super(0, 0, spawnInterval, EntityLayer.General);
+        super(0, 0, baseInterval, EntityLayer.General);
     }
 
     public Entity getEntity() {
@@ -26,6 +26,14 @@ public class HunterFishSpawner extends Spawner {
     }
 
     public void afterSpawn() {
-        generateSpawnInterval(spawnInterval, 40);
+        generateSpawnInterval(baseInterval, baseInterval / 2);
+    }
+
+    public void setInterval(int interval) {
+        baseInterval = interval;
+    }
+
+    public int getInterval() {
+        return baseInterval;
     }
 }

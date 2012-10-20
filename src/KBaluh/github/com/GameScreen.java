@@ -1,7 +1,7 @@
 package KBaluh.github.com;
 
 import KBaluh.github.com.Levels.Level;
-import KBaluh.github.com.Levels.StartupLevel;
+import KBaluh.github.com.Levels.LevelManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -28,16 +28,15 @@ public class GameScreen extends JPanel implements ActionListener {
 
     private static int gameTickInterval = 1000/60;
     private Timer gameTimer = new Timer(gameTickInterval, this);
-    private Level level = new StartupLevel(this);
+
+    private LevelManager levelManager = new LevelManager(this);
+    private Level level;
 
     public GameScreen() {
-        setFocusable(true);
+        level = levelManager.first();
         addKeyListener(new GameKeyAdapter());
+        setFocusable(true);
         gameTimer.start();
-    }
-
-    public void setLevel(Level level) {
-        this.level = level;
     }
 
     /**
@@ -53,7 +52,19 @@ public class GameScreen extends JPanel implements ActionListener {
      * @param e
      */
     public void actionPerformed(ActionEvent e) {
-        level.tick();
+        if (level.levelIsDone()) {
+            level.levelStop();
+            JOptionPane.showMessageDialog(null, "Level done, you scores: " + level.getPlayerScores());
+            if (levelManager.isNext()) {
+                level = levelManager.next();
+            } else {
+                gameTimer.stop();
+                JOptionPane.showMessageDialog(null, "Game is done!");
+                System.exit(1);
+            }
+        } else {
+            level.tick();
+        }
         repaint();
     }
 }
