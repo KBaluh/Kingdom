@@ -1,6 +1,7 @@
 package KBaluh.github.com.Levels;
 
 import KBaluh.github.com.Entity.Spawners.BubbleSpawner;
+import KBaluh.github.com.Entity.Spawners.GreenFishSpawner;
 import KBaluh.github.com.Entity.Spawners.HunterFishSpawner;
 import KBaluh.github.com.Entity.Spawners.SupportItemSpawner;
 import KBaluh.github.com.GameScreen;
@@ -27,8 +28,13 @@ public class LevelTwo extends StartupLevel {
     @Override
     protected void initSpawners() {
         addSpawner(new BubbleSpawner());
-        addSpawner(new HunterFishSpawner());
         addSpawner(new SupportItemSpawner());
+
+        addSpawner(new HunterFishSpawner());
+
+        GreenFishSpawner greenFishSpawner = new GreenFishSpawner();
+        greenFishSpawner.setBaseInterval(340);
+        addSpawner(greenFishSpawner);
     }
 
     @Override
