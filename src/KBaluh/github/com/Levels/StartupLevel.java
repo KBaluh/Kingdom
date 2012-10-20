@@ -229,6 +229,14 @@ public class StartupLevel extends Level {
     }
 
     /**
+     * Player of level
+     * @return player
+     */
+    protected Player getPlayer() {
+        return player;
+    }
+
+    /**
      * Event of level is victory
      */
     protected void victory() {

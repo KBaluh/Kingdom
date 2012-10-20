@@ -49,6 +49,10 @@ public abstract class Mob extends Entity implements IBonusReceiver {
         return maxHp;
     }
 
+    public void setMaxHp(float hp) {
+        this.maxHp = hp;
+    }
+
     public void hurt(float damage) {
         hp -= damage;
         if (hp <= 0) {
