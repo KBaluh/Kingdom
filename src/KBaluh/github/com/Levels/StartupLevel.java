@@ -95,26 +95,22 @@ public class StartupLevel extends Level {
         addSpawner(new SupportItemSpawner());
     }
 
+    /**
+     * After 3 levels on level, level is done
+     * @return
+     */
     public boolean levelIsDone() {
-        return  (levelCount > 3);
+        return (levelCount > 3);
     }
 
+    /**
+     * Clear all entities
+     */
     public void levelStop() {
-        for (int i = 0; i < spawners.size(); ++i) {
-            spawners.remove(i);
-        }
-
-        for (int i = 0; i < entitiesBack.size(); ++i) {
-            entitiesBack.remove(i);
-        }
-
-        for (int i = 0; i < entities.size(); ++i) {
-            entities.remove(i);
-        }
-
-        for (int i = 0; i < entitiesPop.size(); ++i) {
-            entitiesPop.remove(i);
-        }
+        spawners.clear();
+        entities.clear();
+        entitiesBack.clear();
+        entitiesPop.clear();
     }
 
     /**
@@ -193,6 +189,14 @@ public class StartupLevel extends Level {
         paintPanel(g);
     }
 
+    /**
+     * Return player scores
+     * @return
+     */
+    public int getPlayerScores() {
+        return player.getScores();
+    }
+
     @Override
     public void tick() {
         if (victoryCondition.playerFail() || player.getHp() <= 0) {
@@ -203,6 +207,19 @@ public class StartupLevel extends Level {
         if (victoryCondition.isVictory()) {
             maxKills = maxKills * 2;
             ++levelCount;
+
+            for (int i = 0; i < spawners.size(); ++i) {
+                if (spawners.get(i) instanceof HunterFishSpawner) {
+                    Spawner spawner = spawners.get(i);
+                    if (levelCount == 2) {
+                        spawner.setInterval(spawner.getInterval() - 20);
+                    } else
+                    if (levelCount == 3) {
+                        spawner.setInterval(spawner.getInterval() - 20);
+                    }
+                }
+            }
+
             victoryCondition.initCondition(maxFishSkipped, maxKills);
         }
 

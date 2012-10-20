@@ -54,6 +54,7 @@ public class GameScreen extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (level.levelIsDone()) {
             level.levelStop();
+            JOptionPane.showMessageDialog(null, "Level done, you scores: " + level.getPlayerScores());
             if (levelManager.isNext()) {
                 level = levelManager.next();
             } else {

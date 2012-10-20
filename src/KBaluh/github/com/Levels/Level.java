@@ -42,4 +42,5 @@ public abstract class Level implements Runnable {
     public abstract boolean canMove(int x, int y, int width, int height);
     public abstract boolean levelIsDone();
     public abstract void levelStop();
+    public abstract int getPlayerScores();
 }
