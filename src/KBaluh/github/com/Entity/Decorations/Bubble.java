@@ -3,9 +3,7 @@ package KBaluh.github.com.Entity.Decorations;
 import KBaluh.github.com.Art;
 import KBaluh.github.com.Entity.Entity;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
 
 /**
  * User: KBaluh
@@ -55,15 +53,5 @@ public class Bubble extends Entity {
 
     public int getY() {
         return y;
-    }
-
-    public void setDy(int dy) {
-        this.dy = dy;
-    }
-
-    public void onKeyUp(KeyEvent e) {
-    }
-
-    public void onKeyDown(KeyEvent e) {
     }
 }

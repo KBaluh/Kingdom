@@ -67,14 +67,14 @@ public class StartupLevel extends Level {
     private int maxKills = 5;
 
     /**
-     * Current level on level
+     * Current battle on level
      */
     private int battleNumber = 1;
 
     /**
-     * Maximum levels on level
+     * Maximum battles on level
      */
-    private int maxLevelCount = 3;
+    private int maxBattles = 3;
 
     /**
      * Victory conditions for level
@@ -93,8 +93,8 @@ public class StartupLevel extends Level {
     }
 
     /**
-     * After 3 levels on level, level is done
-     * @return
+     * Level done after 3 battles on level
+     * @return level is done
      */
     public boolean levelIsDone() {
         return (battleNumber > 3);
@@ -134,6 +134,7 @@ public class StartupLevel extends Level {
      */
     public void addEntityBack(Entity entity) {
         entitiesBack.add(entity);
+        entity.init(this);
     }
 
     /**
@@ -142,6 +143,7 @@ public class StartupLevel extends Level {
      */
     public void addEntityPop(Entity entity) {
         entitiesPop.add(entity);
+        entity.init(this);
     }
 
     /**
@@ -227,10 +229,18 @@ public class StartupLevel extends Level {
     }
 
     /**
+     * Player of level
+     * @return player
+     */
+    protected Player getPlayer() {
+        return player;
+    }
+
+    /**
      * Event of level is victory
      */
     protected void victory() {
-        if (battleNumber <= maxLevelCount) {
+        if (battleNumber <= maxBattles) {
             maxKills = maxKills * 2;
             ++battleNumber;
         }
@@ -240,9 +250,11 @@ public class StartupLevel extends Level {
                 Spawner spawner = spawners.get(i);
                 if (battleNumber == 2) {
                     spawner.setBaseInterval(spawner.getBaseInterval() - 20);
+                    player.increaseHp(player.getMaxHp());
                 } else
                 if (battleNumber == 3) {
                     spawner.setBaseInterval(spawner.getBaseInterval() - 20);
+                    player.increaseHp(player.getMaxHp());
                 }
             }
         }
@@ -255,8 +267,11 @@ public class StartupLevel extends Level {
      */
     protected void initSpawners() {
         addSpawner(new BubbleSpawner());
-        addSpawner(new HunterFishSpawner());
         addSpawner(new SupportItemSpawner());
+
+        HunterFishSpawner hunterFishSpawner = new HunterFishSpawner();
+        //hunterFishSpawner.setBaseInterval(150);
+        addSpawner(hunterFishSpawner);
     }
 
     /**

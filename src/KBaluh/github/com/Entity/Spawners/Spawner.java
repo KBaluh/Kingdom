@@ -3,7 +3,6 @@ package KBaluh.github.com.Entity.Spawners;
 import KBaluh.github.com.Entity.Entity;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.util.Random;
 
 /**
@@ -42,12 +41,6 @@ public abstract class Spawner extends Entity {
 
     public Image getImage() {
         return null;
-    }
-
-    public void onKeyDown(KeyEvent e) {
-    }
-
-    public void onKeyUp(KeyEvent e) {
     }
 
     public void spawn() {
