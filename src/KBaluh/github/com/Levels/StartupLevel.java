@@ -67,14 +67,14 @@ public class StartupLevel extends Level {
     private int maxKills = 5;
 
     /**
-     * Current level on level
+     * Current battle on level
      */
     private int battleNumber = 1;
 
     /**
-     * Maximum levels on level
+     * Maximum battles on level
      */
-    private int maxLevelCount = 3;
+    private int maxBattles = 3;
 
     /**
      * Victory conditions for level
@@ -93,8 +93,8 @@ public class StartupLevel extends Level {
     }
 
     /**
-     * After 3 levels on level, level is done
-     * @return
+     * Level done after 3 battles on level
+     * @return level is done
      */
     public boolean levelIsDone() {
         return (battleNumber > 3);
@@ -134,6 +134,7 @@ public class StartupLevel extends Level {
      */
     public void addEntityBack(Entity entity) {
         entitiesBack.add(entity);
+        entity.init(this);
     }
 
     /**
@@ -142,6 +143,7 @@ public class StartupLevel extends Level {
      */
     public void addEntityPop(Entity entity) {
         entitiesPop.add(entity);
+        entity.init(this);
     }
 
     /**
@@ -230,7 +232,7 @@ public class StartupLevel extends Level {
      * Event of level is victory
      */
     protected void victory() {
-        if (battleNumber <= maxLevelCount) {
+        if (battleNumber <= maxBattles) {
             maxKills = maxKills * 2;
             ++battleNumber;
         }
