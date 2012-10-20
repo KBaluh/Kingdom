@@ -72,6 +72,11 @@ public class StartupLevel extends Level {
     private int levelCount = 1;
 
     /**
+     * Maximum levels on level
+     */
+    private int maxLevelCount = 3;
+
+    /**
      * Victory conditions for level
      */
     private VictoryCondition victoryCondition = new VictoryCondition();
@@ -205,8 +210,11 @@ public class StartupLevel extends Level {
         }
 
         if (victoryCondition.isVictory()) {
-            maxKills = maxKills * 2;
-            ++levelCount;
+
+            if (levelCount + 1 <= maxLevelCount) {
+                maxKills = maxKills * 2;
+                ++levelCount;
+            }
 
             for (int i = 0; i < spawners.size(); ++i) {
                 if (spawners.get(i) instanceof HunterFishSpawner) {
