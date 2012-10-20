@@ -1,6 +1,5 @@
 package KBaluh.github.com;
 
-import javax.swing.*;
 import java.awt.*;
 
 /**
@@ -9,40 +8,32 @@ import java.awt.*;
  */
 public class Art {
 
+    private static ResLoader resLoader = new ResLoader();
+
     // Backgrounds
-    public static final Image background = loadImage("res/background.jpg");
+    public static final Image background = resLoader.loadImage("res/background.jpg");
 
     // Decorations
-    public static final Image bubbleSmall = loadImage("res/bubble_small.png");
-    public static final Image bubbleMiddle = loadImage("res/bubble_middle.png");
-    public static final Image bubbleLarge = loadImage("res/bubble_large.png");
+    public static final Image bubbleSmall = resLoader.loadImage("res/bubble_small.png");
+    public static final Image bubbleMiddle = resLoader.loadImage("res/bubble_middle.png");
+    public static final Image bubbleLarge = resLoader.loadImage("res/bubble_large.png");
 
     // Bullets
-    public static final Image rocketBulletLeft = loadImage("res/RocketBulletLeft.png");
-    public static final Image rocketBulletRight = loadImage("res/RocketBulletRight.png");
-    public static final Image rocketBulletExplosion1 = loadImage("res/expl1.png");
-    public static final Image rocketBulletExplosion2 = loadImage("res/expl2.png");
-    public static final Image rocketBulletExplosion3 = loadImage("res/expl3.png");
-    public static final Image rocketBulletExplosion4 = loadImage("res/expl4.png");
-    public static final Image rocketBulletExplosion5 = loadImage("res/expl5.png");
+    public static final Image rocketBulletLeft = resLoader.loadImage("res/RocketBulletLeft.png");
+    public static final Image rocketBulletRight = resLoader.loadImage("res/RocketBulletRight.png");
+    public static final Image rocketBulletExplosion1 = resLoader.loadImage("res/expl1.png");
+    public static final Image rocketBulletExplosion2 = resLoader.loadImage("res/expl2.png");
+    public static final Image rocketBulletExplosion3 = resLoader.loadImage("res/expl3.png");
+    public static final Image rocketBulletExplosion4 = resLoader.loadImage("res/expl4.png");
+    public static final Image rocketBulletExplosion5 = resLoader.loadImage("res/expl5.png");
 
     // Mobs
-    public static final Image playerLeft = loadImage("res/player_left.png");
-    public static final Image playerRight = loadImage("res/player_right.png");
+    public static final Image playerLeft = resLoader.loadImage("res/player_left.png");
+    public static final Image playerRight = resLoader.loadImage("res/player_right.png");
 
-    public static final Image hunterFishLeft = loadImage("res/hunterFishLeft.png");
-    public static final Image hunterFishRight = loadImage("res/hunterFishRight.png");
+    public static final Image hunterFishLeft = resLoader.loadImage("res/hunterFishLeft.png");
+    public static final Image hunterFishRight = resLoader.loadImage("res/hunterFishRight.png");
 
     // Support items
-    public static final Image medicineChest = loadImage("res/MedicineChest.png");
-
-
-    /**
-     * Load image
-     * @param patch - path for file, example : "res/background.jpg"
-     * @return Image
-     */
-    public static Image loadImage(String patch) {
-        return new ImageIcon(patch).getImage();
-    }
+    public static final Image medicineChest = resLoader.loadImage("res/MedicineChest.png");
 }
