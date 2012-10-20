@@ -242,9 +242,11 @@ public class StartupLevel extends Level {
                 Spawner spawner = spawners.get(i);
                 if (battleNumber == 2) {
                     spawner.setBaseInterval(spawner.getBaseInterval() - 20);
+                    player.increaseHp(player.getMaxHp());
                 } else
                 if (battleNumber == 3) {
                     spawner.setBaseInterval(spawner.getBaseInterval() - 20);
+                    player.increaseHp(player.getMaxHp());
                 }
             }
         }
@@ -257,8 +259,11 @@ public class StartupLevel extends Level {
      */
     protected void initSpawners() {
         addSpawner(new BubbleSpawner());
-        addSpawner(new HunterFishSpawner());
         addSpawner(new SupportItemSpawner());
+
+        HunterFishSpawner hunterFishSpawner = new HunterFishSpawner();
+        //hunterFishSpawner.setBaseInterval(150);
+        addSpawner(hunterFishSpawner);
     }
 
     /**
