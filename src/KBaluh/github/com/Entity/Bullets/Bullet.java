@@ -5,7 +5,6 @@ import KBaluh.github.com.Entity.Entity;
 import KBaluh.github.com.Entity.Team;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 
 /**
  * Author: KBaluh
@@ -87,11 +86,5 @@ public abstract class Bullet extends Entity {
 
     public int getY() {
         return y;
-    }
-
-    public void onKeyUp(KeyEvent e) {
-    }
-
-    public void onKeyDown(KeyEvent e) {
     }
 }

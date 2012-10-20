@@ -2,8 +2,6 @@ package KBaluh.github.com.Entity.SupportItems;
 
 import KBaluh.github.com.Entity.Entity;
 
-import java.awt.event.KeyEvent;
-
 /**
  * User: KBaluh
  * Date time: 17.10.12 14:52
@@ -23,12 +21,6 @@ public abstract class SupportItem extends Entity {
 
     public void tick() {
         setY(getY() - speed);
-    }
-
-    public void onKeyDown(KeyEvent e) {
-    }
-
-    public void onKeyUp(KeyEvent e) {
     }
 
     public int getBonus() {

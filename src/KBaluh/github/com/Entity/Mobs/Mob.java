@@ -7,7 +7,6 @@ import KBaluh.github.com.Entity.Team;
 import KBaluh.github.com.Weapons.Weapon;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 
 /**
  * Author: KBaluh
@@ -48,6 +47,10 @@ public abstract class Mob extends Entity implements IBonusReceiver {
 
     public float getMaxHp() {
         return maxHp;
+    }
+
+    public void setMaxHp(float hp) {
+        this.maxHp = hp;
     }
 
     public void hurt(float damage) {
@@ -117,12 +120,6 @@ public abstract class Mob extends Entity implements IBonusReceiver {
                 this.hp = maxHp;
             }
         }
-    }
-
-    public void onKeyDown(KeyEvent e) {
-    }
-
-    public void onKeyUp(KeyEvent e) {
     }
 
     public abstract Image getImage();

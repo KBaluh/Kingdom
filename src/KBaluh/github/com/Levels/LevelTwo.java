@@ -1,5 +1,6 @@
 package KBaluh.github.com.Levels;
 
+import KBaluh.github.com.Entity.Mobs.Player;
 import KBaluh.github.com.Entity.Spawners.BubbleSpawner;
 import KBaluh.github.com.Entity.Spawners.GreenFishSpawner;
 import KBaluh.github.com.Entity.Spawners.HunterFishSpawner;
@@ -40,6 +41,9 @@ public class LevelTwo extends StartupLevel {
     @Override
     protected void initPlayer() {
         super.initPlayer();
+        Player player = getPlayer();
+        player.setMaxHp(150);
+        player.increaseHp(player.getMaxHp());
     }
 
     @Override

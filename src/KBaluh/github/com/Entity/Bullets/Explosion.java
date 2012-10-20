@@ -3,7 +3,6 @@ package KBaluh.github.com.Entity.Bullets;
 import KBaluh.github.com.Entity.Entity;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 
 /**
  * User: KBaluh
@@ -45,11 +44,5 @@ public class Explosion extends Entity {
 
     public Image getImage() {
         return image;
-    }
-
-    public void onKeyDown(KeyEvent e) {
-    }
-
-    public void onKeyUp(KeyEvent e) {
     }
 }

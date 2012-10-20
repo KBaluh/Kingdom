@@ -10,7 +10,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.util.Random;
 
 /**
@@ -72,7 +71,7 @@ public class GreenFish extends Mob implements ActionListener {
      */
     private int genShootTime() {
         Random random = new Random();
-        int shootDelay = 500 + random.nextInt(6000);
+        int shootDelay = 750 + random.nextInt(4000);
         return shootDelay;
     }
 
@@ -82,11 +81,5 @@ public class GreenFish extends Mob implements ActionListener {
         } else {
             return  imageRight;
         }
-    }
-
-    public void onKeyDown(KeyEvent e) {
-    }
-
-    public void onKeyUp(KeyEvent e) {
     }
 }
