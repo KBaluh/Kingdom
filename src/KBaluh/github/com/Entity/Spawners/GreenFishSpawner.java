@@ -1,31 +1,29 @@
 package KBaluh.github.com.Entity.Spawners;
 
+import KBaluh.github.com.Entity.Direction;
 import KBaluh.github.com.Entity.Entity;
-import KBaluh.github.com.Entity.SupportItems.MedicineChest;
+import KBaluh.github.com.Entity.Mobs.GreenFish;
 
 import java.util.Random;
 
 /**
- * User: KBaluh
- * Date time: 17.10.12 14:58
+ * Author: kostya
+ * Date: 20.10.12:18:25
  */
-public class SupportItemSpawner extends Spawner {
+public class GreenFishSpawner extends Spawner {
 
-    private static int baseInterval = 1500;
+    private int baseInterval = 140;
     private int interval = baseInterval;
 
-    public SupportItemSpawner() {
+    public GreenFishSpawner() {
         super(0, 0, EntityLayer.General);
     }
 
     public Entity getEntity() {
-        return getRandomEntity();
-    }
-
-    private Entity getRandomEntity() {
         Random random = new Random();
-        int x = random.nextInt(level.getScreenWidth());
-        return new MedicineChest(x, level.getScreenHeight());
+        int y = Math.abs(random.nextInt(level.getScreenHeight() - 100));
+        int x = level.getScreenWidth() + 10;
+        return new GreenFish(x, y, Direction.LEFT);
     }
 
     public void setInterval(int interval) {
@@ -42,5 +40,10 @@ public class SupportItemSpawner extends Spawner {
 
     public void setBaseInterval(int baseInterval) {
         this.baseInterval = baseInterval;
+    }
+
+    @Override
+    public void afterSpawn() {
+        generateSpawnInterval(baseInterval, baseInterval / 2);
     }
 }
