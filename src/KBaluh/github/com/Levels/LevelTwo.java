@@ -25,7 +25,10 @@ public class LevelTwo extends StartupLevel {
     @Override
     protected void initSpawners() {
         addSpawner(new BubbleSpawner());
-        addSpawner(new SupportItemSpawner());
+
+        SupportItemSpawner supportItemSpawner = new SupportItemSpawner();
+        supportItemSpawner.setBaseInterval(900);
+        addSpawner(supportItemSpawner);
 
         addSpawner(new HunterFishSpawner());
 
