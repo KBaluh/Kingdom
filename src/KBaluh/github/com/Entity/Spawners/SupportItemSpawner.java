@@ -11,10 +11,10 @@ import java.util.Random;
  */
 public class SupportItemSpawner extends Spawner {
 
-    private static int spawnInterval = 3000;
+    private static int spawnInterval = 1500;
 
     public SupportItemSpawner() {
-        super(0, 0, spawnInterval, EntityLayer.Pop);
+        super(0, 0, spawnInterval, EntityLayer.General);
     }
 
     public Entity getEntity() {
