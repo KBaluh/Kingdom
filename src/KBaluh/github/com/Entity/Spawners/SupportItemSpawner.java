@@ -11,18 +11,15 @@ import java.util.Random;
  */
 public class SupportItemSpawner extends Spawner {
 
-    private static int spawnInterval = 1500;
+    private static int baseInterval = 1500;
+    private int interval = baseInterval;
 
     public SupportItemSpawner() {
-        super(0, 0, spawnInterval, EntityLayer.General);
+        super(0, 0, EntityLayer.General);
     }
 
     public Entity getEntity() {
         return getRandomEntity();
-    }
-
-    public void afterSpawn() {
-        generateSpawnInterval(spawnInterval, spawnInterval * 2);
     }
 
     private Entity getRandomEntity() {
@@ -31,4 +28,19 @@ public class SupportItemSpawner extends Spawner {
         return new MedicineChest(x, level.getScreenHeight());
     }
 
+    public void setInterval(int interval) {
+        this.interval = interval;
+    }
+
+    public int getInterval() {
+        return interval;
+    }
+
+    public int getBaseInterval() {
+        return baseInterval;
+    }
+
+    public void setBaseInterval(int baseInterval) {
+        this.baseInterval = baseInterval;
+    }
 }

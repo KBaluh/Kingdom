@@ -43,4 +43,5 @@ public abstract class Level implements Runnable {
     public abstract boolean levelIsDone();
     public abstract void levelStop();
     public abstract int getPlayerScores();
+    public abstract int getLevelNumber();
 }

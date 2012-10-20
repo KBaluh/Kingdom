@@ -12,10 +12,11 @@ import java.util.Random;
  */
 public class BubbleSpawner extends Spawner {
 
-    private static int spawnInterval = 20;
+    private static int baseInterval = 20;
+    private int interval = baseInterval;
 
     public BubbleSpawner() {
-        super(0, 0, spawnInterval, EntityLayer.Back);
+        super(0, 0, EntityLayer.Back);
     }
 
     public Entity getEntity() {
@@ -35,7 +36,6 @@ public class BubbleSpawner extends Spawner {
                 bubbleSpeed, bubbleType);
     }
 
-    @Override
     public void spawn() {
         Bubble bubble = (Bubble) getEntity();
         if (bubble.type == BubbleType.Small) {
@@ -54,7 +54,19 @@ public class BubbleSpawner extends Spawner {
         afterSpawn();
     }
 
-    public void afterSpawn() {
-        generateSpawnInterval(spawnInterval, 20);
+    public int getInterval() {
+        return interval;
+    }
+
+    public void setInterval(int interval) {
+        this.interval = interval;
+    }
+
+    public int getBaseInterval() {
+        return baseInterval;
+    }
+
+    public void setBaseInterval(int baseInterval) {
+        this.baseInterval = baseInterval;
     }
 }
