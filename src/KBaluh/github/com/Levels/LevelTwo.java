@@ -1,5 +1,6 @@
 package KBaluh.github.com.Levels;
 
+import KBaluh.github.com.Art;
 import KBaluh.github.com.Entity.Mobs.Player;
 import KBaluh.github.com.Entity.Spawners.BubbleSpawner;
 import KBaluh.github.com.Entity.Spawners.GreenFishSpawner;
@@ -14,8 +15,12 @@ import java.awt.*;
  * Date: 20.10.12:15:15
  */
 public class LevelTwo extends StartupLevel {
+
+    private Image background = Art.background2;
+
     public LevelTwo(GameScreen screen) {
         super(screen);
+        setBackground(background);
     }
 
     @Override
