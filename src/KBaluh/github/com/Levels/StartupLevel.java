@@ -218,6 +218,26 @@ public class StartupLevel extends Level {
     }
 
     /**
+     * @return Return level number
+     */
+    public int getLevelNumber() {
+        return 1;
+    }
+
+    /**
+     * Check if the player outside level
+     * @param x - player coordinate x
+     * @param y - player coordinate y
+     * @param width - player width
+     * @param height - player height
+     * @return player can move
+     */
+    public boolean canMove(int x, int y, int width, int height) {
+        return ((x >= 0 && x <= gameScreen.getWidth() - width) &&
+                (y >= 0 && y <= gameScreen.getHeight() - height));
+    }
+
+    /**
      * Remove old and set new player on level.
      * Add player on entities list
      * @param player - new player
@@ -323,23 +343,11 @@ public class StartupLevel extends Level {
     }
 
     /**
-     * @return Return level number
+     * Set a background fon
+     * @param image - background image
      */
-    public int getLevelNumber() {
-        return 1;
-    }
-
-    /**
-     * Check if the player outside level
-     * @param x - player coordinate x
-     * @param y - player coordinate y
-     * @param width - player width
-     * @param height - player height
-     * @return player can move
-     */
-    public boolean canMove(int x, int y, int width, int height) {
-        return ((x >= 0 && x <= gameScreen.getWidth() - width) &&
-                (y >= 0 && y <= gameScreen.getHeight() - height));
+    protected void setBackground(Image image) {
+        background = image;
     }
 
     /**
