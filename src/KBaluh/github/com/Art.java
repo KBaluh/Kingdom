@@ -13,6 +13,7 @@ public class Art {
     // Backgrounds
     public static final Image background = resLoader.loadImage("res/background.jpg");
     public static final Image background2 = resLoader.loadImage("res/background2.jpg");
+    public static final Image background3 = resLoader.loadImage("res/background3.jpg");
 
     // Decorations
     public static final Image bubbleSmall = resLoader.loadImage("res/bubble_small.png");
