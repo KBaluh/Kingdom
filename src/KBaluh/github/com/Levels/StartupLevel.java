@@ -82,6 +82,21 @@ public class StartupLevel extends Level {
     protected VictoryCondition victoryCondition = new VictoryCondition();
 
     /**
+     * Text to show on battle number
+     */
+    private String battleShowText = "";
+
+    /**
+     * Max time life to show battle text
+     */
+    private final int battleMaxShowTime = 120;
+
+    /**
+     * Current battle show time life
+     */
+    private int battleShowTimeLife = battleMaxShowTime;
+
+    /**
      * Constructor
      * @param gameScreen - game screen is JPanel
      */
@@ -90,6 +105,7 @@ public class StartupLevel extends Level {
         initVictoryCondition();
         initPlayer();
         initSpawners();
+        showBattleText();
     }
 
     /**
@@ -186,11 +202,13 @@ public class StartupLevel extends Level {
 
         // Paint information panel
         paintPanel(g);
+
+        paintBattleText(g);
     }
 
     /**
-     * Return player scores
-     * @return
+     * Get of player scores
+     * @return player scores
      */
     public int getPlayerScores() {
         return player.getScores();
@@ -201,6 +219,13 @@ public class StartupLevel extends Level {
         if (victoryCondition.playerFail() || player.getHp() <= 0) {
             JOptionPane.showMessageDialog(null, "Game over, your scores: " + player.getScores());
             System.exit(1);
+        }
+
+        if (battleShowTimeLife >= 0) {
+            --battleShowTimeLife;
+            if (battleShowTimeLife == 0) {
+                hideBattleText();
+            }
         }
 
         if (victoryCondition.isVictory()) {
@@ -263,6 +288,7 @@ public class StartupLevel extends Level {
         if (battleNumber <= maxBattles) {
             maxKills = maxKills * 2;
             ++battleNumber;
+            showBattleText();
         }
 
         for (int i = 0; i < spawners.size(); ++i) {
@@ -489,5 +515,29 @@ public class StartupLevel extends Level {
             entity.tick();
             handleCanMove(entity);
         }
+    }
+
+    /**
+     * Set battle text
+     */
+    private void showBattleText() {
+        battleShowTimeLife = battleMaxShowTime;
+        battleShowText = "Level: " + getLevelNumber() + ", Battle: " + battleNumber;
+    }
+
+    /**
+     * Set empty battle text
+     */
+    private void hideBattleText() {
+        battleShowText = "";
+    }
+
+    private void paintBattleText(Graphics g) {
+        int fontSize = 28;
+        Font font = new Font("Arial", Font.BOLD, fontSize);
+        g.setFont(font);
+        g.setColor(Color.WHITE);
+        Dimension dim = new Dimension(gameScreen.getWidth(), gameScreen.getHeight());
+        g.drawString(battleShowText, dim.width/2 - 100, dim.height/2/2);
     }
 }
