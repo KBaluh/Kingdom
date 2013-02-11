@@ -20,10 +20,17 @@ public class Explosion extends Entity {
     public Explosion(IExplosion explosionEntity, int x, int y) {
         this.explosionEntity = explosionEntity;
 
-        int offsetX = 0;
-        int offsetY = -60;
-        setX(x + offsetX);
-        setY(y + offsetY);
+        final int offsetX = 0;
+        final int offsetY = -60;
+
+        int posX = x + offsetX;
+        int posY = y + offsetY;
+
+        if (posY < 0) {
+            posY = 0;
+        }
+        setX(posX);
+        setY(posY);
 
         ticks = explosionEntity.getInterval();
     }
