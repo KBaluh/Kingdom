@@ -36,5 +36,6 @@ public class LevelManager {
 
         levels.add(new StartupLevel(screen));
         levels.add(new LevelTwo(screen));
+        levels.add(new LevelThree(screen));
     }
 }

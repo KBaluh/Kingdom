@@ -322,7 +322,6 @@ public class StartupLevel extends Level {
 
         HunterFishSpawner hunterFishSpawner = new HunterFishSpawner();
         addSpawner(hunterFishSpawner);
-        addSpawner(new TopFishSpawner());
     }
 
     /**
