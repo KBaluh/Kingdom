@@ -2,11 +2,7 @@ package KBaluh.github.com.Levels;
 
 import KBaluh.github.com.Art;
 import KBaluh.github.com.Entity.Mobs.Player;
-import KBaluh.github.com.Entity.Spawners.BubbleSpawner;
-import KBaluh.github.com.Entity.Spawners.GreenFishSpawner;
-import KBaluh.github.com.Entity.Spawners.HunterFishSpawner;
-import KBaluh.github.com.Entity.Spawners.SeaMineSpawner;
-import KBaluh.github.com.Entity.Spawners.SupportItemSpawner;
+import KBaluh.github.com.Entity.Spawners.*;
 import KBaluh.github.com.GameScreen;
 
 import java.awt.*;
@@ -44,6 +40,7 @@ public class LevelTwo extends StartupLevel {
         addSpawner(greenFishSpawner);
 
         addSpawner(new SeaMineSpawner());
+        addSpawner(new TopFishMineSpawner());
     }
 
     @Override

@@ -5,10 +5,7 @@ import KBaluh.github.com.Entity.Bullets.Bullet;
 import KBaluh.github.com.Entity.Entity;
 import KBaluh.github.com.Entity.Mobs.Mob;
 import KBaluh.github.com.Entity.Mobs.Player;
-import KBaluh.github.com.Entity.Spawners.BubbleSpawner;
-import KBaluh.github.com.Entity.Spawners.HunterFishSpawner;
-import KBaluh.github.com.Entity.Spawners.Spawner;
-import KBaluh.github.com.Entity.Spawners.SupportItemSpawner;
+import KBaluh.github.com.Entity.Spawners.*;
 import KBaluh.github.com.Entity.SupportItems.MedicineChest;
 import KBaluh.github.com.GameScreen;
 
@@ -306,6 +303,16 @@ public class StartupLevel extends Level {
         victoryCondition.initCondition(maxFishSkipped, maxKills);
     }
 
+    @Override
+    public int getPlayerX() {
+        return player.getX();
+    }
+
+    @Override
+    public int getPlayerY() {
+        return player.getY();
+    }
+
     /**
      * Init spawners on level
      */
@@ -315,6 +322,7 @@ public class StartupLevel extends Level {
 
         HunterFishSpawner hunterFishSpawner = new HunterFishSpawner();
         addSpawner(hunterFishSpawner);
+        addSpawner(new TopFishSpawner());
     }
 
     /**
