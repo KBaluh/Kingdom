@@ -445,12 +445,6 @@ public class StartupLevel extends Level {
                         bullet.hit();
                         removeEntity(bullet);
 
-                        if (bullet instanceof IExplosion) {
-                            addEntity(new Explosion((IExplosion) bullet,
-                                    bullet.getX(),
-                                    bullet.getY()));
-                        }
-
                         if (!mob.isLive()) {
                             if (!(mob instanceof Player)) {
                                 player.addScores(mob.getScores());
