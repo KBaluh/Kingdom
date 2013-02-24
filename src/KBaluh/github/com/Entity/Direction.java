@@ -6,5 +6,7 @@ package KBaluh.github.com.Entity;
  */
 public enum Direction {
     LEFT,
-    RIGHT
+    RIGHT,
+    UP,
+    DOWN
 }
