@@ -58,6 +58,7 @@ public abstract class Mob extends Entity implements IBonusReceiver {
         if (hp <= 0) {
             hp = 0;
             live = false;
+            deathAnimation();
         }
     }
 
@@ -120,6 +121,9 @@ public abstract class Mob extends Entity implements IBonusReceiver {
                 this.hp = maxHp;
             }
         }
+    }
+
+    protected void deathAnimation() {
     }
 
     public abstract Image getImage();
