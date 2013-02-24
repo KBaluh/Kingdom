@@ -432,8 +432,8 @@ public class StartupLevel extends Level {
         if (entity instanceof Bullet) {
             Bullet bullet = (Bullet) entity;
 
-            for (int j = 0; j < entities.size(); j++) {
-                Entity entityMob = entities.get(j);
+            for (int i = 0; i < entities.size(); i++) {
+                Entity entityMob = entities.get(i);
                 if (entityMob instanceof Mob) {
                     Mob mob = (Mob) entityMob;
                     if (mob.getTeam() == bullet.getTeam()) {
@@ -444,12 +444,6 @@ public class StartupLevel extends Level {
                         mob.hurt(bullet.getDamage());
                         bullet.hit();
                         removeEntity(bullet);
-
-                        if (bullet instanceof IExplosion) {
-                            addEntity(new Explosion((IExplosion) bullet,
-                                    bullet.getX(),
-                                    bullet.getY()));
-                        }
 
                         if (!mob.isLive()) {
                             if (!(mob instanceof Player)) {
