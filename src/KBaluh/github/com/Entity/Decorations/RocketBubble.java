@@ -1,21 +1,19 @@
 package KBaluh.github.com.Entity.Decorations;
 
-import javax.swing.*;
-import java.awt.*;
 import java.util.Random;
 
 /**
- * Author: kostya
+ * Author: KBaluh
  * Date: 19.10.12:0:30
  */
 public class RocketBubble extends Bubble {
 
-    private Random random = new Random();
-    private static int bubbleSpeed = 4;
+    private static final Random random = new Random();
+    private static final int bubbleSpeed = 4;
     private int timeLife = 2;
     private int currentTimeLife = 0;
 
-    private int freezeTime = 2;
+    private static final int freezeTime = 2;
     private int currentFreezeTime = 0;
 
 
