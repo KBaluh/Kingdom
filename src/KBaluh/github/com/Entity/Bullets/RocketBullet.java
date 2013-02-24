@@ -56,6 +56,12 @@ public class RocketBullet extends Bullet implements IExplosion {
         }
     }
 
+    @Override
+    public void hit() {
+        super.hit();
+        level.addEntity(new Explosion(this, getX(), getY()));
+    }
+
     public Image getImage() {
         if (isHit()) {
             return null;

@@ -1,5 +1,6 @@
 package KBaluh.github.com.Entity.Mobs;
 
+import KBaluh.github.com.Entity.Decorations.DeathBubbles;
 import KBaluh.github.com.Entity.Direction;
 import KBaluh.github.com.Entity.Entity;
 import KBaluh.github.com.Entity.SupportItems.IBonusReceiver;
@@ -58,6 +59,7 @@ public abstract class Mob extends Entity implements IBonusReceiver {
         if (hp <= 0) {
             hp = 0;
             live = false;
+            deathAnimation();
         }
     }
 
@@ -120,6 +122,11 @@ public abstract class Mob extends Entity implements IBonusReceiver {
                 this.hp = maxHp;
             }
         }
+    }
+
+    protected void deathAnimation() {
+        DeathBubbles animation = new DeathBubbles(level, getX(), getY());
+        animation.CreateBubbles();
     }
 
     public abstract Image getImage();
