@@ -28,6 +28,8 @@ public class Art {
     public static final Image rocketBulletExplosion3 = resLoader.loadImage("res/expl3.png");
     public static final Image rocketBulletExplosion4 = resLoader.loadImage("res/expl4.png");
     public static final Image rocketBulletExplosion5 = resLoader.loadImage("res/expl5.png");
+    public static final Image seaMineTop = resLoader.loadImage("res/SeaMineTop.png");
+    public static final Image seaMine = resLoader.loadImage("res/SeaMine.png");
 
     // Mobs
     public static final Image playerLeft = resLoader.loadImage("res/player_left.png");
@@ -43,5 +45,4 @@ public class Art {
 
     // Support items
     public static final Image medicineChest = resLoader.loadImage("res/MedicineChest.png");
-    public static final Image seaMine = resLoader.loadImage("res/SeaMine.png");
 }
