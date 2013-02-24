@@ -39,6 +39,8 @@ public class Art {
     public static final Image greenFishLeft = resLoader.loadImage("res/greenFishLeft.png");
     public static final Image greenFishRight = resLoader.loadImage("res/greenFishRight.png");
 
+    public static final Image topFish = resLoader.loadImage("res/TopFish.png");
+
     // Support items
     public static final Image medicineChest = resLoader.loadImage("res/MedicineChest.png");
     public static final Image seaMine = resLoader.loadImage("res/SeaMine.png");
