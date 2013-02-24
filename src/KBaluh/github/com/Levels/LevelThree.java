@@ -7,15 +7,11 @@ import KBaluh.github.com.GameScreen;
 
 import java.awt.*;
 
-/**
- * Author: KBaluh
- * Date: 20.10.12:15:15
- */
-public class LevelTwo extends StartupLevel {
+public class LevelThree extends StartupLevel {
 
-    private static final Image background = Art.background2;
+    private static final Image background = Art.background3;
 
-    public LevelTwo(GameScreen screen) {
+    public LevelThree(GameScreen screen) {
         super(screen);
         setBackground(background);
     }
@@ -30,39 +26,36 @@ public class LevelTwo extends StartupLevel {
         addSpawner(new BubbleSpawner());
 
         SupportItemSpawner supportItemSpawner = new SupportItemSpawner();
-        supportItemSpawner.setBaseInterval(900);
+        supportItemSpawner.setBaseInterval(850);
         addSpawner(supportItemSpawner);
 
-        addSpawner(new HunterFishSpawner());
-
         GreenFishSpawner greenFishSpawner = new GreenFishSpawner();
-        greenFishSpawner.setBaseInterval(400);
+        greenFishSpawner.setBaseInterval(420);
         addSpawner(greenFishSpawner);
+        addSpawner(new GreenFishSpawner());
 
-        addSpawner(new SeaMineSpawner());
-        addSpawner(new TopFishSpawner());
+        SeaMineSpawner seaMineSpawner = new SeaMineSpawner();
+        seaMineSpawner.setBaseInterval(200);
+        addSpawner(seaMineSpawner);
+
+        addSpawner(new TopFishMineSpawner());
     }
 
     @Override
     protected void initPlayer() {
         super.initPlayer();
         Player player = getPlayer();
-        player.setMaxHp(150);
+        player.setMaxHp(180);
         player.increaseHp(player.getMaxHp());
     }
 
     @Override
     protected void initVictoryCondition() {
-        victoryCondition.initCondition(10, 10);
-    }
-
-    @Override
-    protected void victory() {
-        super.victory();
+        victoryCondition.initCondition(10, 12);
     }
 
     @Override
     public int getLevelNumber() {
-        return 2;
+        return 3;
     }
 }
