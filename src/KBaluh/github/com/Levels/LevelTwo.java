@@ -5,6 +5,7 @@ import KBaluh.github.com.Entity.Mobs.Player;
 import KBaluh.github.com.Entity.Spawners.BubbleSpawner;
 import KBaluh.github.com.Entity.Spawners.GreenFishSpawner;
 import KBaluh.github.com.Entity.Spawners.HunterFishSpawner;
+import KBaluh.github.com.Entity.Spawners.SeaMineSpawner;
 import KBaluh.github.com.Entity.Spawners.SupportItemSpawner;
 import KBaluh.github.com.GameScreen;
 
@@ -16,7 +17,7 @@ import java.awt.*;
  */
 public class LevelTwo extends StartupLevel {
 
-    private Image background = Art.background2;
+    private static final Image background = Art.background2;
 
     public LevelTwo(GameScreen screen) {
         super(screen);
@@ -41,6 +42,8 @@ public class LevelTwo extends StartupLevel {
         GreenFishSpawner greenFishSpawner = new GreenFishSpawner();
         greenFishSpawner.setBaseInterval(400);
         addSpawner(greenFishSpawner);
+
+        addSpawner(new SeaMineSpawner());
     }
 
     @Override
