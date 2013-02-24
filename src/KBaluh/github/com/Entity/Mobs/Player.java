@@ -145,4 +145,8 @@ public class Player extends Mob {
     public void addScores(int scores) {
         this.scores += scores;
     }
+
+    @Override
+    protected void deathAnimation() {
+    }
 }

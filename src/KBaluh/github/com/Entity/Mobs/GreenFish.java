@@ -82,4 +82,8 @@ public class GreenFish extends Mob implements ActionListener {
             return  imageRight;
         }
     }
+
+    @Override
+    protected void deathAnimation() {
+    }
 }

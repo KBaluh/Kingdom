@@ -85,6 +85,5 @@ public class HunterFish extends Mob implements ActionListener {
 
     @Override
     protected void deathAnimation() {
-
     }
 }
