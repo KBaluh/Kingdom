@@ -41,4 +41,5 @@ public class Art {
 
     // Support items
     public static final Image medicineChest = resLoader.loadImage("res/MedicineChest.png");
+    public static final Image seaMine = resLoader.loadImage("res/SeaMine.png");
 }

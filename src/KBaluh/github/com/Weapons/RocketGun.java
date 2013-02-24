@@ -10,7 +10,7 @@ import KBaluh.github.com.Entity.Mobs.Mob;
  */
 public class RocketGun extends Weapon {
 
-    private static int shootDelay = 30;
+    private static final int shootDelay = 30;
 
     public RocketGun(Mob mob) {
         super(mob, shootDelay);
@@ -20,13 +20,11 @@ public class RocketGun extends Weapon {
         if (canShoot) {
             canShoot = false;
 
-            int offsetX = -(mob.getImageWidth());
+            int offsetX = 0;
             int offsetY = -(mob.getImageHeight() / 2);
 
             if (mob.getDir() == Direction.LEFT) {
-                offsetX -= offsetX;
-            } else {
-                offsetX += 40;
+                offsetX += (mob.getImageWidth() / 2);
             }
 
             RocketBullet bullet = new RocketBullet(mob.getX() - offsetX,

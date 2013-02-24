@@ -73,9 +73,6 @@ public abstract class Entity {
         return getRectangle().intersects(entity.getRectangle());
     }
 
-    public void paint(Graphics g) {
-    }
-
     public abstract Image getImage();
     public abstract void tick();
 }

@@ -12,8 +12,6 @@ import java.awt.*;
  */
 public abstract class Bullet extends Entity {
 
-    private int x;
-    private int y;
     private int dx;
     private int dy;
 
@@ -30,8 +28,8 @@ public abstract class Bullet extends Entity {
     private boolean isHit = false;
 
     public Bullet(int x, int y, int speed, Direction dir, float damage, Team team) {
-        this.x = x;
-        this.y = y;
+        setX(x);
+        setY(y);
         this.speed = speed;
         this.dir = dir;
         this.team = team;
@@ -57,16 +55,25 @@ public abstract class Bullet extends Entity {
         if (isHit) {
             return;
         }
+
         if (tickCount == 0) {
-            if (dir == Direction.LEFT) {
-                dx += -speed;
-            }
-            if (dir == Direction.RIGHT) {
-                dx += speed;
+            switch(dir) {
+                case LEFT:
+                    dx += -speed;
+                    break;
+                case RIGHT:
+                    dx += speed;
+                    break;
+                case UP:
+                    dy -= speed;
+                    break;
+                case DOWN:
+                    dy += speed;
+                    break;
             }
 
-            x += dx;
-            y += dy;
+            setX(getX() + dx);
+            setY(getY() + dy);
 
             tickCount = ticks;
         } else {
@@ -79,12 +86,4 @@ public abstract class Bullet extends Entity {
     }
 
     public abstract Image getImage();
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
 }

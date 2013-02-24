@@ -2,8 +2,6 @@ package KBaluh.github.com.Levels;
 
 import KBaluh.github.com.Art;
 import KBaluh.github.com.Entity.Bullets.Bullet;
-import KBaluh.github.com.Entity.Bullets.Explosion;
-import KBaluh.github.com.Entity.Bullets.IExplosion;
 import KBaluh.github.com.Entity.Entity;
 import KBaluh.github.com.Entity.Mobs.Mob;
 import KBaluh.github.com.Entity.Mobs.Player;
@@ -74,7 +72,7 @@ public class StartupLevel extends Level {
     /**
      * Maximum battles on level
      */
-    private int maxBattles = 3;
+    private static final int maxBattles = 3;
 
     /**
      * Victory conditions for level
@@ -316,7 +314,6 @@ public class StartupLevel extends Level {
         addSpawner(new SupportItemSpawner());
 
         HunterFishSpawner hunterFishSpawner = new HunterFishSpawner();
-        //hunterFishSpawner.setBaseInterval(150);
         addSpawner(hunterFishSpawner);
     }
 
