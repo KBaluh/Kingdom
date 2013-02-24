@@ -12,8 +12,8 @@ import java.awt.*;
  */
 public abstract class Bullet extends Entity {
 
-    private int dx;
-    private int dy;
+    protected int dx;
+    protected int dy;
 
     private int speed;
     private Direction dir;
