@@ -19,7 +19,7 @@ import java.util.List;
  * User: KBaluh
  * Date time: 16.10.12 17:37
  */
-public class StartupLevel extends Level {
+public abstract class BaseLevel extends Level {
 
     /**
      * Image for paint background
@@ -95,7 +95,7 @@ public class StartupLevel extends Level {
      * Constructor
      * @param gameScreen - game screen is JPanel
      */
-    public StartupLevel(GameScreen gameScreen) {
+    public BaseLevel(GameScreen gameScreen) {
         super(gameScreen);
         initVictoryCondition();
         initPlayer();
@@ -318,10 +318,6 @@ public class StartupLevel extends Level {
      */
     protected void initSpawners() {
         addSpawner(new BubbleSpawner());
-        addSpawner(new SupportItemSpawner());
-
-        HunterFishSpawner hunterFishSpawner = new HunterFishSpawner();
-        addSpawner(hunterFishSpawner);
     }
 
     /**
