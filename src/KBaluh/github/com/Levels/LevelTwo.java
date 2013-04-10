@@ -11,7 +11,7 @@ import java.awt.*;
  * Author: KBaluh
  * Date: 20.10.12:15:15
  */
-public class LevelTwo extends StartupLevel {
+public class LevelTwo extends BaseLevel {
 
     private static final Image background = Art.background2;
 
@@ -27,7 +27,7 @@ public class LevelTwo extends StartupLevel {
 
     @Override
     protected void initSpawners() {
-        addSpawner(new BubbleSpawner());
+        super.initSpawners();
 
         SupportItemSpawner supportItemSpawner = new SupportItemSpawner();
         supportItemSpawner.setBaseInterval(900);
