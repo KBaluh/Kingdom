@@ -2,8 +2,11 @@ package KBaluh.github.com.Entity.Mobs;
 
 import KBaluh.github.com.Art;
 import KBaluh.github.com.Entity.Direction;
+import KBaluh.github.com.Entity.SupportItems.BubbleShield;
 import KBaluh.github.com.Entity.Team;
+import KBaluh.github.com.Levels.Level;
 import KBaluh.github.com.Weapons.RocketGun;
+import KBaluh.github.com.Weapons.RocketGunChaotic;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -22,9 +25,19 @@ public class Player extends Mob {
 
     private int scores = 0;
 
+    private BubbleShield shield;
+    private int maxShieldDelay = 600;
+    private int shieldDelay = maxShieldDelay;
+
+    @Override
+    public void init(Level level) {
+        super.init(level);
+        createShield();
+    }
+
     public Player(int x, int y) {
         super(x, y, startHp, Team.TeamOne);
-        RocketGun weapon = new RocketGun(this);
+        RocketGun weapon = new RocketGunChaotic(this);
         setWeapon(weapon);
         setDir(Direction.RIGHT);
         setSpeed(startSpeed);
@@ -44,6 +57,11 @@ public class Player extends Mob {
             setY(getY() + dy);
         }
         weapon.tick();
+
+        shieldDelay++;
+        if (shieldDelay > maxShieldDelay) {
+            shieldDelay = maxShieldDelay;
+        }
     }
 
     public void onKeyUp(KeyEvent e) {
@@ -81,6 +99,15 @@ public class Player extends Mob {
                 dx = 0;
                 break;
         }
+    }
+
+    @Override
+    public void hurt(float damage) {
+        if (shield.isActive()) {
+            shield.hurt(damage);
+            return;
+        }
+        super.hurt(damage);
     }
 
     public void onKeyDown(KeyEvent e) {
@@ -128,8 +155,9 @@ public class Player extends Mob {
                 setDir(Direction.LEFT);
                 break;
 
-            case KeyEvent.VK_SPACE:
-                weapon.useWeapon();
+            case KeyEvent.VK_SPACE :
+                createShield();
+                activateShield();
                 break;
         }
 
@@ -144,5 +172,29 @@ public class Player extends Mob {
 
     public void addScores(int scores) {
         this.scores += scores;
+    }
+
+    private void createShield() {
+        if (shield == null || shield.isRemoved()) {
+            shield = new BubbleShield(this);
+            shield.init(level);
+        }
+    }
+
+    private void activateShield() {
+        if (shield == null) {
+            return;
+        }
+
+        if (shieldDelay < maxShieldDelay) {
+            return;
+        }
+
+        if (shield.isActive()) {
+            return;
+        }
+
+        shield.activate();
+        shieldDelay = 0;
     }
 }
