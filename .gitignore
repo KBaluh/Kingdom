@@ -15,7 +15,10 @@ bin/
 proguard/
 
 # Intellij project files
-*.iml
 *.ipr
 *.iws
-.idea/
+.idea/workspace.xml
+.idea/misc.xml
+.idea/uiDesigner.xml
+.gitm*
+.pydevproject
