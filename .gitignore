@@ -17,4 +17,8 @@ proguard/
 # Intellij project files
 *.ipr
 *.iws
-.idea/
+.idea/workspace.xml
+.idea/misc.xml
+.idea/uiDesigner.xml
+.gitm*
+.pydevproject
