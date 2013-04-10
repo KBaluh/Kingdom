@@ -7,7 +7,7 @@ import KBaluh.github.com.GameScreen;
 
 import java.awt.*;
 
-public class LevelThree extends StartupLevel {
+public class LevelThree extends BaseLevel {
 
     private static final Image background = Art.background3;
 
