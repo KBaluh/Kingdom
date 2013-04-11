@@ -30,8 +30,13 @@ public class BubbleShield extends Mob {
 
     @Override
     public void tick() {
-        setX(mob.getX());
-        setY(mob.getY());
+        int cx = mob.getX() + (mob.getImageWidth()/2);
+        int cy = mob.getY() + (mob.getImageHeight()/2);
+        cx -= getImageWidth()/2;
+        cy -= getImageHeight()/2;
+
+        setX(cx);
+        setY(cy);
 
         if (--timeLife <=0) {
             remove();
