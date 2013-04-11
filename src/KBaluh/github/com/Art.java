@@ -45,4 +45,5 @@ public class Art {
 
     // Support items
     public static final Image medicineChest = resLoader.loadImage("res/MedicineChest.png");
+    public static final Image bubbleShield = resLoader.loadImage("res/bubble_shield.png");
 }
