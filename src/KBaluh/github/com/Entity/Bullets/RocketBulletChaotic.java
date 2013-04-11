@@ -6,8 +6,8 @@ import KBaluh.github.com.Entity.Team;
 public class RocketBulletChaotic extends RocketBullet {
 
 
-    private int b = 2;
-    private int c = 15;
+    private int b = 1;
+    private int c = 25;
 
     public RocketBulletChaotic(int x, int y, Direction dir, Team team) {
         super(x, y, dir, team);
