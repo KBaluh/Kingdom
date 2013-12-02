@@ -2,6 +2,7 @@ package KBaluh.github.com.Entity.Decorations;
 
 import KBaluh.github.com.Art;
 import KBaluh.github.com.Entity.Entity;
+import KBaluh.github.com.Entity.PaintEntity;
 
 import java.awt.*;
 

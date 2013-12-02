@@ -1,5 +1,6 @@
 package KBaluh.github.com.Entity.Spawners;
 
+import KBaluh.github.com.Entity.EmptyPaint;
 import KBaluh.github.com.Entity.Entity;
 
 import java.awt.*;
@@ -18,6 +19,7 @@ public abstract class Spawner extends Entity {
         this.layer = layer;
         setX(x);
         setY(y);
+        setPaintBehavior(new EmptyPaint());
     }
 
     public abstract Entity getEntity();

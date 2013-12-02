@@ -17,6 +17,23 @@ public abstract class Entity {
 
     private boolean removed = false;
 
+    private PaintBehavior paintBehavior;
+
+    public Entity() {
+        paintBehavior = new PaintEntity();
+    }
+
+    public PaintBehavior getPaintBehavior() {
+        if (paintBehavior == null) {
+            paintBehavior = new EmptyPaint();
+        }
+        return paintBehavior;
+    }
+
+    public void setPaintBehavior(PaintBehavior paintBehavior) {
+        this.paintBehavior = paintBehavior;
+    }
+
     public void remove() {
         removed = true;
     }
@@ -75,4 +92,8 @@ public abstract class Entity {
 
     public abstract Image getImage();
     public abstract void tick();
+
+    public void paint(Graphics g) {
+        getPaintBehavior().paint(g, this);
+    }
 }

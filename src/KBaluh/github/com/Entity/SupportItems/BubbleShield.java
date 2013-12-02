@@ -2,6 +2,7 @@ package KBaluh.github.com.Entity.SupportItems;
 
 import KBaluh.github.com.Art;
 import KBaluh.github.com.Entity.Mobs.Mob;
+import KBaluh.github.com.Entity.PaintEntity;
 
 import java.awt.*;
 
@@ -13,7 +14,6 @@ public class BubbleShield extends Mob {
     private boolean isActiveShield;
 
     private static float baseHp = 20;
-    private float hp = baseHp;
 
     private int maxTimeLife = 400;
     private int timeLife = maxTimeLife;
@@ -21,6 +21,7 @@ public class BubbleShield extends Mob {
     public BubbleShield(Mob mob) {
         super(0, 0, baseHp, mob.getTeam());
         this.mob = mob;
+        setPaintBehavior(new PaintEntity());
     }
 
     @Override
@@ -44,8 +45,8 @@ public class BubbleShield extends Mob {
     }
 
     public void hurt(float damage) {
-        hp -= damage;
-        if (hp <= 0){
+        super.hurt(damage);
+        if (getHp() <= 0){
             remove();
             isActiveShield = false;
         }
@@ -61,7 +62,7 @@ public class BubbleShield extends Mob {
         }
 
         timeLife = maxTimeLife;
-        hp = baseHp;
+        increaseHp(getMaxHp());
         level.addEntity(this);
 
         isActiveShield = true;

@@ -182,17 +182,17 @@ public abstract class BaseLevel extends Level {
 
         for (int i = 0; i < entitiesBack.size(); ++i) {
             Entity entity = entitiesBack.get(i);
-            paintEntity(g, entity);
+            entity.paint(g);
         }
 
         for (int i = 0; i < entities.size(); ++i) {
             Entity entity = entities.get(i);
-            paintEntity(g, entity);
+            entity.paint(g);
         }
 
         for (int i = 0; i < entitiesPop.size(); ++i) {
             Entity entity = entitiesPop.get(i);
-            paintEntity(g, entity);
+            entity.paint(g);
         }
 
         // Paint information panel
@@ -456,18 +456,6 @@ public abstract class BaseLevel extends Level {
                     }
                 }
             }
-        }
-    }
-
-    /**
-     * Paint entity on level
-     * @param g - Graphics
-     * @param entity - Entity
-     */
-    private void paintEntity(Graphics g, Entity entity) {
-        Image image = entity.getImage();
-        if (image != null) {
-            g.drawImage(image, entity.getX(), entity.getY(), null);
         }
     }
 

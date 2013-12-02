@@ -1,6 +1,7 @@
 package KBaluh.github.com.Entity.Bullets;
 
 import KBaluh.github.com.Entity.Entity;
+import KBaluh.github.com.Entity.PaintEntity;
 
 import java.awt.*;
 
