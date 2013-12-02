@@ -4,6 +4,7 @@ import KBaluh.github.com.Entity.Decorations.Bubble;
 import KBaluh.github.com.Entity.Decorations.BubbleType;
 import KBaluh.github.com.Entity.Entity;
 
+import java.awt.*;
 import java.util.Random;
 
 /**

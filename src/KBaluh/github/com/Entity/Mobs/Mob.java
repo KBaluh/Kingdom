@@ -32,6 +32,7 @@ public abstract class Mob extends Entity implements IBonusReceiver {
         setTeam(team);
         this.maxHp = hp;
         this.hp = hp;
+        setPaintBehavior(new PaintMobWithHp());
     }
 
     protected int getSpeed() {
