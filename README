@@ -9,5 +9,7 @@ resources/  Art used by the Java version.
 tools/      GenExplosionSounds.java - regenerates the rocket explosion sounds:
                 java tools/GenExplosionSounds.java
 
-Controls: WASD / arrows - move, Ctrl (or J) - rocket, Space - bubble shield,
+Keyboard: WASD / arrows - move, Ctrl (or J) - rocket, Space - bubble shield,
 Esc (or P) - pause.
+Gamepad:  left stick / d-pad - move, A or RT - rocket, X or LB - bubble shield,
+Start - pause, A / B - confirm / back in menus.

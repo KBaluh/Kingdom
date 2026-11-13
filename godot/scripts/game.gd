@@ -93,16 +93,22 @@ func _physics_process(_delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if not event.is_action_pressed("pause"):
-		return
+	var pause_pressed := event.is_action_pressed("pause")
 	if _state == State.PLAYING:
+		if not pause_pressed:
+			return
 		_pause()
 	elif _state == State.PAUSED:
+		# In the pause menu the gamepad's B button (ui_cancel) also goes back.
+		if not pause_pressed and not event.is_action_pressed("ui_cancel"):
+			return
 		if _settings_panel.visible:
 			Global.save_settings()
 			_show_panel(_pause_panel)
 		else:
 			_resume()
+	else:
+		return
 	get_viewport().set_input_as_handled()
 
 

@@ -8,6 +8,7 @@ const LEVEL_COUNT := 3
 var _main: MenuPanel
 var _levels: MenuPanel
 var _settings: MenuPanel
+var _hint: Label
 
 
 func _ready() -> void:
@@ -28,12 +29,13 @@ func _ready() -> void:
 	header.add_child(MenuPanel.make_label("Захисти рибне королівство від хижаків", 22))
 	add_child(header)
 
-	var hint := MenuPanel.make_label(
-			"WASD / стрілки — рух     Ctrl — ракета     Пробіл — щит     Esc — пауза", 18)
-	hint.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
-	hint.offset_top = -48
-	hint.offset_bottom = -18
-	add_child(hint)
+	_hint = MenuPanel.make_label("", 18)
+	_hint.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
+	_hint.offset_top = -48
+	_hint.offset_bottom = -18
+	add_child(_hint)
+	_update_hint()
+	Input.joy_connection_changed.connect(_update_hint)
 
 	_main = MenuPanel.new()
 	_main.add_button("Нова гра", _start.bind(0))
@@ -59,6 +61,14 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_cancel") and not _main.visible:
 		Global.save_settings()
 		_show("main")
+
+
+## Shows gamepad controls while a gamepad is connected, keyboard ones otherwise.
+func _update_hint(_device: int = 0, _connected: bool = false) -> void:
+	if Global.has_gamepad():
+		_hint.text = "Стік / хрестовина — рух     A / RT — ракета     X / LB — щит     Start — пауза"
+	else:
+		_hint.text = "WASD / стрілки — рух     Ctrl — ракета     Пробіл — щит     Esc — пауза"
 
 
 func _show(panel_name: String) -> void:
