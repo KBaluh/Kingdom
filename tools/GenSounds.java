@@ -8,7 +8,8 @@ import java.util.Random;
 
 /**
  * Procedurally synthesizes the underwater rocket sounds (16-bit mono WAV):
- * explosions, launches and a seamless in-flight loop.
+ * explosions, launches and a seamless in-flight loop, plus the looping
+ * ambient background music (stereo).
  *
  * Run from the project root:
  *   java tools/GenSounds.java [outputDir]
@@ -26,6 +27,22 @@ public class GenSounds {
     private static final int EXPLOSION_VARIANTS = 4;
     private static final int LAUNCH_VARIANTS = 3;
 
+    // Ambient music. Half the usual sample rate keeps the file small; the
+    // music has nothing above a few kHz anyway.
+    private static final int MUSIC_RATE = 22050;
+    private static final double BAR_SECONDS = 8.0;
+    /** Seconds over which one chord cross-fades into the next. */
+    private static final double CHORD_FADE = 3.0;
+    /** One chord per bar as MIDI notes: bass first, then the pad voicing. */
+    private static final int[][] CHORDS = {
+        {38, 50, 57, 60, 64, 65},   // Dm9
+        {34, 53, 58, 62, 65, 69},   // Bbmaj7
+        {41, 53, 57, 60, 64, 67},   // Fmaj9
+        {36, 52, 55, 57, 62, 64},   // C6/9
+        {43, 55, 58, 62, 65, 69},   // Gm9
+        {45, 52, 57, 62, 64, 67},   // A7sus4, leads back to Dm
+    };
+
     public static void main(String[] args) throws Exception {
         File outDir = new File(args.length > 0 ? args[0] : "godot/assets/sounds");
         if (!outDir.isDirectory() && !outDir.mkdirs()) {
@@ -38,6 +55,11 @@ public class GenSounds {
             save(launch(new Random(i * 0xC2B2AE3D27D4EB4FL)), new File(outDir, "rocket_launch" + i + ".wav"));
         }
         save(flightLoop(new Random(0x165667B19E3779F9L)), new File(outDir, "rocket_flight.wav"));
+
+        File musicFile = new File(outDir, "ambient_music.wav");
+        double[][] music = music(new Random(0x27D4EB2F165667C5L));
+        writeStereo(music[0], music[1], MUSIC_RATE, musicFile);
+        System.out.printf("%s  %.2fs%n", musicFile.getPath(), music[0].length / (double) MUSIC_RATE);
     }
 
     private static void save(double[] samples, File file) throws Exception {
@@ -237,6 +259,166 @@ public class GenSounds {
             out[i] *= 0.92 / peak;
         }
         return out;
+    }
+
+    /**
+     * Slow underwater ambient that loops seamlessly: every layer is written
+     * with wrap-around, so whatever rings past the end continues at the start.
+     *   - a soft pad of detuned sines, one chord per bar, cross-faded
+     *   - a sine bass on the chord root
+     *   - sparse bell-like "drops" on chord tones with a ping-pong echo
+     *   - a quiet bed of low-passed noise that swells like a current
+     * Returns {left, right}.
+     */
+    private static double[][] music(Random rnd) {
+        int n = (int) (CHORDS.length * BAR_SECONDS * MUSIC_RATE);
+        double[] left = new double[n];
+        double[] right = new double[n];
+
+        for (int c = 0; c < CHORDS.length; c++) {
+            int[] chord = CHORDS[c];
+            double start = c * BAR_SECONDS - CHORD_FADE / 2;
+            double length = BAR_SECONDS + CHORD_FADE;
+            addPadTone(left, right, start, length, midiToHz(chord[0]), 0.17, 0.5, 0.4, 0);
+            for (int k = 1; k < chord.length; k++) {
+                // Three slightly detuned voices spread across the stereo field.
+                for (int voice = -1; voice <= 1; voice++) {
+                    double freq = midiToHz(chord[k]) * Math.pow(2, voice * 6.5 / 1200);
+                    addPadTone(left, right, start, length, freq, 0.045, 0.5 + voice * 0.35, 0.25,
+                            rnd.nextDouble() * 2 * Math.PI);
+                }
+            }
+        }
+
+        // Bells go to their own buffers so that only they get the echo.
+        double[] bellLeft = new double[n];
+        double[] bellRight = new double[n];
+        double total = CHORDS.length * BAR_SECONDS;
+        double time = 0.75;
+        while (time < total) {
+            int[] chord = CHORDS[(int) (time / BAR_SECONDS)];
+            int note = chord[1 + rnd.nextInt(chord.length - 1)] + (rnd.nextBoolean() ? 12 : 24);
+            addBell(bellLeft, bellRight, time, midiToHz(note), 0.05 + rnd.nextDouble() * 0.05, rnd.nextDouble());
+            time += 0.75 * (1 + rnd.nextInt(4));
+        }
+        int echo = (int) (0.5625 * MUSIC_RATE);
+        for (int i = 0; i < n; i++) {
+            left[i] += bellLeft[i];
+            right[i] += bellRight[i];
+            double gain = 1;
+            for (int tap = 1; tap <= 5; tap++) {
+                gain *= 0.5;
+                int from = Math.floorMod(i - tap * echo, n);
+                // Odd taps cross to the other side: ping-pong.
+                left[i] += gain * (tap % 2 == 1 ? bellRight[from] : bellLeft[from]);
+                right[i] += gain * (tap % 2 == 1 ? bellLeft[from] : bellRight[from]);
+            }
+        }
+
+        double[] currentLeft = loopingNoise(n, rnd, 300, MUSIC_RATE);
+        double[] currentRight = loopingNoise(n, rnd, 300, MUSIC_RATE);
+        for (int i = 0; i < n; i++) {
+            // Three and four swells per loop, so both channels wrap cleanly.
+            double x = i / (double) n;
+            left[i] += 0.5 * currentLeft[i] * (0.6 + 0.4 * Math.sin(2 * Math.PI * 3 * x));
+            right[i] += 0.5 * currentRight[i] * (0.6 + 0.4 * Math.sin(2 * Math.PI * 4 * x + 1));
+        }
+
+        double peak = 0;
+        for (int i = 0; i < n; i++) {
+            peak = Math.max(peak, Math.max(Math.abs(left[i]), Math.abs(right[i])));
+        }
+        for (int i = 0; i < n; i++) {
+            left[i] *= 0.8 / peak;
+            right[i] *= 0.8 / peak;
+        }
+        return new double[][] {left, right};
+    }
+
+    /**
+     * Adds a sustained tone that fades in and out over CHORD_FADE seconds.
+     * {@code pan} runs from 0 (left) to 1 (right); {@code octave} is the level
+     * of the second harmonic. Indices wrap around the buffer.
+     */
+    private static void addPadTone(double[] left, double[] right, double start, double length,
+            double freq, double amp, double pan, double octave, double phase) {
+        int n = left.length;
+        int first = (int) Math.round(start * MUSIC_RATE);
+        int samples = (int) (length * MUSIC_RATE);
+        double gainLeft = amp * Math.cos(pan * Math.PI / 2);
+        double gainRight = amp * Math.sin(pan * Math.PI / 2);
+        for (int i = 0; i < samples; i++) {
+            double t = i / (double) MUSIC_RATE;
+            double edge = Math.min(t, length - t) / CHORD_FADE;
+            double env = edge >= 1 ? 1 : 0.5 - 0.5 * Math.cos(Math.PI * edge);
+            double swell = 1 + 0.2 * Math.sin(2 * Math.PI * 0.13 * t + phase);
+            double angle = 2 * Math.PI * freq * t + phase;
+            double sample = (Math.sin(angle) + octave * Math.sin(2 * angle)) * env * swell;
+            int at = Math.floorMod(first + i, n);
+            left[at] += gainLeft * sample;
+            right[at] += gainRight * sample;
+        }
+    }
+
+    /** Adds a soft bell: a sine with a quickly fading octave, ringing for a few seconds. */
+    private static void addBell(double[] left, double[] right, double start, double freq, double amp, double pan) {
+        int n = left.length;
+        int first = (int) Math.round(start * MUSIC_RATE);
+        int samples = 4 * MUSIC_RATE;
+        double gainLeft = amp * Math.cos(pan * Math.PI / 2);
+        double gainRight = amp * Math.sin(pan * Math.PI / 2);
+        for (int i = 0; i < samples; i++) {
+            double t = i / (double) MUSIC_RATE;
+            double angle = 2 * Math.PI * freq * t;
+            double env = Math.min(1, t / 0.008) * Math.exp(-t / 0.9);
+            double sample = (Math.sin(angle) + 0.3 * Math.exp(-t / 0.4) * Math.sin(2 * angle)) * env;
+            int at = Math.floorMod(first + i, n);
+            left[at] += gainLeft * sample;
+            right[at] += gainRight * sample;
+        }
+    }
+
+    /** Low-passed noise of length {@code n} whose end runs into its start without a click. */
+    private static double[] loopingNoise(int n, Random rnd, double cutoff, int rate) {
+        int overlap = rate / 2;
+        double[] noise = new double[n + overlap];
+        double a = 1 - Math.exp(-2 * Math.PI * cutoff / rate);
+        double lp1 = 0, lp2 = 0;
+        for (int i = 0; i < noise.length; i++) {
+            lp1 += a * (rnd.nextDouble() * 2 - 1 - lp1);
+            lp2 += a * (lp1 - lp2);
+            noise[i] = lp2;
+        }
+        double[] out = new double[n];
+        for (int i = 0; i < n; i++) {
+            if (i < overlap) {
+                double x = i / (double) overlap;
+                out[i] = noise[i] * Math.sqrt(x) + noise[n + i] * Math.sqrt(1 - x);
+            } else {
+                out[i] = noise[i];
+            }
+        }
+        return out;
+    }
+
+    private static double midiToHz(int note) {
+        return 440 * Math.pow(2, (note - 69) / 12.0);
+    }
+
+    private static void writeStereo(double[] left, double[] right, int rate, File file) throws Exception {
+        byte[] pcm = new byte[left.length * 4];
+        for (int i = 0; i < left.length; i++) {
+            short l = (short) Math.round(left[i] * Short.MAX_VALUE);
+            short r = (short) Math.round(right[i] * Short.MAX_VALUE);
+            pcm[4 * i] = (byte) l;
+            pcm[4 * i + 1] = (byte) (l >> 8);
+            pcm[4 * i + 2] = (byte) r;
+            pcm[4 * i + 3] = (byte) (r >> 8);
+        }
+        AudioFormat format = new AudioFormat(rate, 16, 2, true, false);
+        try (AudioInputStream in = new AudioInputStream(new ByteArrayInputStream(pcm), format, left.length)) {
+            AudioSystem.write(in, AudioFileFormat.Type.WAVE, file);
+        }
     }
 
     private static void write(double[] samples, File file) throws Exception {

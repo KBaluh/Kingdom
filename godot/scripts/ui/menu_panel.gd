@@ -62,20 +62,27 @@ func add_button(text: String, action: Callable) -> Button:
 	return button
 
 
-## Volume, fullscreen and vibration panel; `on_back` is called after the settings are saved.
-static func settings(on_back: Callable) -> MenuPanel:
-	var panel := MenuPanel.new("Налаштування")
-
-	panel.add_label("Гучність", 20)
+## Adds a titled 0..1 slider; `on_change` receives the new value.
+func add_slider(title: String, value: float, on_change: Callable) -> HSlider:
+	add_label(title, 20)
 	var slider := HSlider.new()
 	slider.min_value = 0.0
 	slider.max_value = 1.0
 	slider.step = 0.05
-	slider.value = Global.volume
+	slider.value = value
 	slider.custom_minimum_size = Vector2(BUTTON_SIZE.x, 28)
-	slider.value_changed.connect(Global.set_volume)
-	slider.drag_ended.connect(Global.preview_volume)
-	panel.box.add_child(slider)
+	slider.value_changed.connect(on_change)
+	box.add_child(slider)
+	return slider
+
+
+## Volume, fullscreen and vibration panel; `on_back` is called after the settings are saved.
+static func settings(on_back: Callable) -> MenuPanel:
+	var panel := MenuPanel.new("Налаштування")
+
+	var volume := panel.add_slider("Загальна гучність", Global.volume, Global.set_volume)
+	volume.drag_ended.connect(Global.preview_volume)
+	panel.add_slider("Музика", Global.music_volume, Global.set_music_volume)
 
 	var fullscreen := panel.add_button(_fullscreen_text(), Global.toggle_fullscreen)
 	fullscreen.pressed.connect(func() -> void: fullscreen.text = _fullscreen_text())
