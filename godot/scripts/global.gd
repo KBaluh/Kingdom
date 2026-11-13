@@ -1,0 +1,250 @@
+extends Node
+## Autoload "Global": user settings, input map, shared sound effects and
+## the level a new run should start from.
+
+const SETTINGS_PATH := "user://settings.cfg"
+const MENU_SCENE := "res://scenes/main_menu.tscn"
+const GAME_SCENE := "res://scenes/game.tscn"
+const EXPLOSION_VARIANTS := 4
+const LAUNCH_VARIANTS := 3
+## Loudness of the in-flight loop with one rocket, and the extra per rocket.
+const FLIGHT_BASE_VOLUME := 0.12
+const FLIGHT_VOLUME_PER_ROCKET := 0.04
+const FLIGHT_MAX_VOLUME := 0.24
+## Volume units per second: the loop fades in and out in a fraction of a second.
+const FLIGHT_FADE_SPEED := 4.0
+## Level of the background music with its slider at maximum.
+const MUSIC_FULL_DB := -6.0
+## How far a stick must be pushed before the fish starts to move.
+const STICK_DEADZONE := 0.4
+const ALL_DEVICES := -1
+
+var volume := 0.8
+## Loudness of the background music relative to the sound effects, 0..1.
+var music_volume := 0.6
+var fullscreen := false
+var vibration := true
+var start_level := 0
+
+var _rocket_boom: AudioStreamPlayer
+var _mine_boom: AudioStreamPlayer
+var _player_launch: AudioStreamPlayer
+var _enemy_launch: AudioStreamPlayer
+var _flight: AudioStreamPlayer
+var _music: AudioStreamPlayer
+var _flight_volume := 0.0
+var _flight_target := 0.0
+## Gamepad the player touched last, or -1 while they are on the keyboard.
+var _active_pad := -1
+
+
+func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS
+	_register_actions()
+	_load_settings()
+	apply_settings()
+	_rocket_boom = _make_variant_player("rocket_explosion", EXPLOSION_VARIANTS, 1.0, -4.0)
+	_mine_boom = _make_variant_player("rocket_explosion", EXPLOSION_VARIANTS, 0.7, -1.0)
+	_player_launch = _make_variant_player("rocket_launch", LAUNCH_VARIANTS, 1.0, -6.0)
+	_enemy_launch = _make_variant_player("rocket_launch", LAUNCH_VARIANTS, 0.85, -14.0)
+	_flight = _make_flight_player()
+	_music = _make_music_player()
+	apply_settings()
+
+
+func _process(delta: float) -> void:
+	if _flight_volume == _flight_target:
+		return
+	_flight_volume = move_toward(_flight_volume, _flight_target, FLIGHT_FADE_SPEED * delta)
+	if _flight_volume <= 0.0:
+		_flight.stop()
+		return
+	_flight.volume_db = linear_to_db(_flight_volume)
+	if not _flight.playing:
+		_flight.play()
+
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventKey:
+		_active_pad = -1
+	elif event is InputEventJoypadButton:
+		_active_pad = event.device
+	elif event is InputEventJoypadMotion and absf(event.axis_value) > STICK_DEADZONE:
+		_active_pad = event.device
+
+
+## Plays a rocket leaving the tube; enemy launches are quieter and lower.
+func play_launch(by_player: bool) -> void:
+	if by_player:
+		_player_launch.play()
+	else:
+		_enemy_launch.play()
+
+
+## Tells the in-flight loop how many rockets are in the water; 0 fades it out.
+func set_rockets_flying(count: int) -> void:
+	if count <= 0:
+		_flight_target = 0.0
+	else:
+		_flight_target = minf(FLIGHT_BASE_VOLUME + FLIGHT_VOLUME_PER_ROCKET * (count - 1), FLIGHT_MAX_VOLUME)
+
+
+## Shakes the gamepad, if the player is using one and vibration is on.
+## `weak` and `strong` are motor strengths from 0 to 1.
+func rumble(weak: float, strong: float, seconds: float) -> void:
+	if vibration and _active_pad >= 0:
+		Input.start_joy_vibration(_active_pad, weak, strong, seconds)
+
+
+func toggle_vibration() -> void:
+	vibration = not vibration
+	rumble(0.3, 0.6, 0.15)
+
+
+## Plays a random rocket explosion; `heavy` gives the deeper sea-mine blast.
+func play_explosion(heavy: bool = false) -> void:
+	if heavy:
+		_mine_boom.play()
+	else:
+		_rocket_boom.play()
+
+
+func set_volume(value: float) -> void:
+	volume = clampf(value, 0.0, 1.0)
+	apply_settings()
+
+
+func set_music_volume(value: float) -> void:
+	music_volume = clampf(value, 0.0, 1.0)
+	apply_settings()
+
+
+func set_fullscreen(enabled: bool) -> void:
+	fullscreen = enabled
+	apply_settings()
+
+
+func toggle_fullscreen() -> void:
+	set_fullscreen(not fullscreen)
+
+
+## Lets the player hear the new volume after releasing the slider.
+func preview_volume(_value_changed: bool = true) -> void:
+	play_explosion()
+
+
+func apply_settings() -> void:
+	var bus := AudioServer.get_bus_index("Master")
+	AudioServer.set_bus_mute(bus, volume <= 0.001)
+	AudioServer.set_bus_volume_db(bus, linear_to_db(maxf(volume, 0.001)))
+	# Null while _ready() is still creating the players.
+	if _music != null:
+		_music.volume_db = MUSIC_FULL_DB + linear_to_db(maxf(music_volume, 0.001))
+		_music.stream_paused = music_volume <= 0.001
+
+	var mode := DisplayServer.WINDOW_MODE_FULLSCREEN if fullscreen else DisplayServer.WINDOW_MODE_WINDOWED
+	if DisplayServer.window_get_mode() != mode:
+		DisplayServer.window_set_mode(mode)
+
+
+func save_settings() -> void:
+	var config := ConfigFile.new()
+	config.set_value("audio", "volume", volume)
+	config.set_value("audio", "music_volume", music_volume)
+	config.set_value("video", "fullscreen", fullscreen)
+	config.set_value("input", "vibration", vibration)
+	config.save(SETTINGS_PATH)
+
+
+func _load_settings() -> void:
+	var config := ConfigFile.new()
+	if config.load(SETTINGS_PATH) != OK:
+		return
+	volume = clampf(float(config.get_value("audio", "volume", volume)), 0.0, 1.0)
+	music_volume = clampf(float(config.get_value("audio", "music_volume", music_volume)), 0.0, 1.0)
+	fullscreen = bool(config.get_value("video", "fullscreen", fullscreen))
+	vibration = bool(config.get_value("input", "vibration", vibration))
+
+
+## Player that picks one of `count` numbered sound files at random each time.
+func _make_variant_player(file_prefix: String, count: int, pitch: float, volume_db: float) -> AudioStreamPlayer:
+	var variants := AudioStreamRandomizer.new()
+	for i in count:
+		var stream: AudioStream = load("res://assets/sounds/%s%d.wav" % [file_prefix, i + 1])
+		variants.add_stream(-1, stream)
+	variants.random_pitch = 1.12
+	variants.random_volume_offset_db = 2.0
+
+	var player := AudioStreamPlayer.new()
+	player.stream = variants
+	player.max_polyphony = 6
+	player.pitch_scale = pitch
+	player.volume_db = volume_db
+	add_child(player)
+	return player
+
+
+func _make_flight_player() -> AudioStreamPlayer:
+	var player := AudioStreamPlayer.new()
+	player.stream = _load_loop("res://assets/sounds/rocket_flight.wav")
+	add_child(player)
+	return player
+
+
+## Background music: plays through the menu, the game and the pause screen.
+func _make_music_player() -> AudioStreamPlayer:
+	var player := AudioStreamPlayer.new()
+	player.stream = _load_loop("res://assets/sounds/ambient_music.wav")
+	add_child(player)
+	player.play()
+	return player
+
+
+## Loads a WAV and makes it repeat over its whole length.
+func _load_loop(path: String) -> AudioStreamWAV:
+	var loop: AudioStreamWAV = load(path)
+	loop.loop_mode = AudioStreamWAV.LOOP_FORWARD
+	loop.loop_begin = 0
+	loop.loop_end = roundi(loop.get_length() * loop.mix_rate)
+	return loop
+
+
+func _register_actions() -> void:
+	# Keyboard keys, gamepad buttons, gamepad [axis, direction] pairs.
+	_add_action("move_left", [KEY_A, KEY_LEFT], [JOY_BUTTON_DPAD_LEFT], [[JOY_AXIS_LEFT_X, -1.0]])
+	_add_action("move_right", [KEY_D, KEY_RIGHT], [JOY_BUTTON_DPAD_RIGHT], [[JOY_AXIS_LEFT_X, 1.0]])
+	_add_action("move_up", [KEY_W, KEY_UP], [JOY_BUTTON_DPAD_UP], [[JOY_AXIS_LEFT_Y, -1.0]])
+	_add_action("move_down", [KEY_S, KEY_DOWN], [JOY_BUTTON_DPAD_DOWN], [[JOY_AXIS_LEFT_Y, 1.0]])
+	_add_action("fire", [KEY_CTRL, KEY_J], [JOY_BUTTON_A], [[JOY_AXIS_TRIGGER_RIGHT, 1.0]])
+	_add_action("shield", [KEY_SPACE], [JOY_BUTTON_X, JOY_BUTTON_LEFT_SHOULDER])
+	_add_action("pause", [KEY_ESCAPE, KEY_P], [JOY_BUTTON_START])
+	# Menus: the built-in actions already navigate with the d-pad and stick,
+	# but have no gamepad buttons for confirm and back.
+	_add_action("ui_accept", [], [JOY_BUTTON_A])
+	_add_action("ui_cancel", [], [JOY_BUTTON_B])
+
+
+## True when at least one gamepad is plugged in.
+func has_gamepad() -> bool:
+	return not Input.get_connected_joypads().is_empty()
+
+
+func _add_action(action: StringName, keys: Array, joy_buttons: Array = [], joy_axes: Array = []) -> void:
+	if not InputMap.has_action(action):
+		InputMap.add_action(action, STICK_DEADZONE)
+	for key in keys:
+		var event := InputEventKey.new()
+		event.physical_keycode = key
+		InputMap.action_add_event(action, event)
+	for button in joy_buttons:
+		var event := InputEventJoypadButton.new()
+		event.device = ALL_DEVICES
+		event.button_index = button
+		if not InputMap.action_has_event(action, event):
+			InputMap.action_add_event(action, event)
+	for axis in joy_axes:
+		var event := InputEventJoypadMotion.new()
+		event.device = ALL_DEVICES
+		event.axis = axis[0]
+		event.axis_value = axis[1]
+		InputMap.action_add_event(action, event)

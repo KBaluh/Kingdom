@@ -22,3 +22,9 @@ proguard/
 .idea/uiDesigner.xml
 .gitm*
 .pydevproject
+# Godot
+godot/.godot/
+
+# Local tools (Godot binary)
+.tools/
+godot/build/

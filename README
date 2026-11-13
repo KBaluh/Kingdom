@@ -1,1 +1,15 @@
 Kingdom - a game where you have to defend your kingdom fish from bad fish
+
+godot/      The game, on Godot 4 (GDScript). Open godot/project.godot in the
+            Godot editor (4.3 or newer) and press F5, or run:
+                godot --path godot
+
+src/        The original Java Swing version (kept for reference).
+resources/  Art used by the Java version.
+tools/      GenSounds.java - regenerates the rocket sounds:
+                java tools/GenSounds.java
+
+Keyboard: WASD / arrows - move, Ctrl (or J) - rocket, Space - bubble shield,
+Esc (or P) - pause.
+Gamepad:  left stick / d-pad - move, A or RT - rocket, X or LB - bubble shield,
+Start - pause, A / B - confirm / back in menus.
