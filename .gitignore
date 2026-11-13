@@ -27,3 +27,4 @@ godot/.godot/
 
 # Local tools (Godot binary)
 .tools/
+godot/build/
