@@ -244,7 +244,9 @@ func _rockets_flying() -> int:
 func _left_screen(entity: Entity) -> bool:
 	if entity is Player or entity is Shield:
 		return false
-	var r := entity.rect()
+	# The sprite, not the hitbox: a sea mine's hitbox is smaller than its
+	# sprite, so at its spawn point on the bottom edge it is already "below".
+	var r := Rect2(entity.position, entity.size())
 	var screen := Entity.SCREEN
 	var inside := r.position.x >= -r.size.x and r.position.x <= screen.x + r.size.x \
 			and r.position.y >= -r.size.y and r.position.y <= screen.y
