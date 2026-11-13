@@ -40,9 +40,10 @@ func tick_weapon() -> void:
 
 
 ## Launches a rocket in the facing direction if the gun has reloaded.
-func fire(chaotic: bool = false) -> void:
+## Returns whether a rocket was actually fired.
+func fire(chaotic: bool = false) -> bool:
 	if _cooldown > 0:
-		return
+		return false
 	_cooldown = SHOOT_DELAY
 	var body := size()
 	var x := position.x + ROCKET_WIDTH
@@ -50,6 +51,10 @@ func fire(chaotic: bool = false) -> void:
 		x -= floorf(body.x / 2.0)
 	var from := Vector2(x, position.y + floorf(body.y / 2.0))
 	level.add_main(Bullet.rocket(from, dir, team, chaotic))
+	# Fish that are still off-screen launch silently.
+	if position.x < SCREEN.x:
+		Global.play_launch(team == TEAM_PLAYER)
+	return true
 
 
 func hurt(damage: float) -> void:

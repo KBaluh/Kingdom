@@ -31,8 +31,8 @@ func tick() -> void:
 	position = (position + input * speed).clamp(Vector2.ZERO, SCREEN - size())
 
 	tick_weapon()
-	if Input.is_action_pressed("fire"):
-		fire(true)
+	if Input.is_action_pressed("fire") and fire(true):
+		Global.rumble(0.3, 0.6, 0.12)
 
 	shield_delay = mini(shield_delay + 1, SHIELD_COOLDOWN)
 	if Input.is_action_just_pressed("shield"):

@@ -189,6 +189,7 @@ func _tick() -> void:
 	_tick_layer(_back, false)
 	_tick_layer(_main, true)
 	_tick_layer(_pop, false)
+	Global.set_rockets_flying(_rockets_flying())
 	_update_hud()
 
 
@@ -221,6 +222,22 @@ func _tick_layer(layer: Node2D, gameplay: bool) -> void:
 		elif entity is MedicineChest and entity.collides(player):
 			player.heal(MedicineChest.BONUS)
 			entity.remove()
+
+
+## The player's rockets currently on screen, for the in-flight sound.
+## Enemy rockets are left out: there is almost always one in the water,
+## which would turn the loop into constant background noise.
+func _rockets_flying() -> int:
+	var count := 0
+	for node in _main.get_children():
+		var bullet := node as Bullet
+		if bullet == null or bullet.removed or not bullet.leaves_trail:
+			continue
+		if bullet.team != Entity.TEAM_PLAYER:
+			continue
+		if bullet.position.x < Entity.SCREEN.x:
+			count += 1
+	return count
 
 
 ## Removes entities that swam off the screen; a fish that gets away is "missed".
@@ -306,6 +323,8 @@ func _set_state(state: State) -> void:
 	var playing := state == State.PLAYING
 	get_tree().paused = not playing
 	_shade.visible = not playing
+	if not playing:
+		Global.set_rockets_flying(0)
 	if playing:
 		_show_panel(null)
 

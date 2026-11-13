@@ -6,8 +6,8 @@ godot/      The game, on Godot 4 (GDScript). Open godot/project.godot in the
 
 src/        The original Java Swing version (kept for reference).
 resources/  Art used by the Java version.
-tools/      GenExplosionSounds.java - regenerates the rocket explosion sounds:
-                java tools/GenExplosionSounds.java
+tools/      GenSounds.java - regenerates the rocket sounds:
+                java tools/GenSounds.java
 
 Keyboard: WASD / arrows - move, Ctrl (or J) - rocket, Space - bubble shield,
 Esc (or P) - pause.

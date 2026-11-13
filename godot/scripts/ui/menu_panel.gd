@@ -62,7 +62,7 @@ func add_button(text: String, action: Callable) -> Button:
 	return button
 
 
-## Volume + fullscreen panel; `on_back` is called after the settings are saved.
+## Volume, fullscreen and vibration panel; `on_back` is called after the settings are saved.
 static func settings(on_back: Callable) -> MenuPanel:
 	var panel := MenuPanel.new("Налаштування")
 
@@ -80,6 +80,9 @@ static func settings(on_back: Callable) -> MenuPanel:
 	var fullscreen := panel.add_button(_fullscreen_text(), Global.toggle_fullscreen)
 	fullscreen.pressed.connect(func() -> void: fullscreen.text = _fullscreen_text())
 
+	var vibration := panel.add_button(_vibration_text(), Global.toggle_vibration)
+	vibration.pressed.connect(func() -> void: vibration.text = _vibration_text())
+
 	var back := panel.add_button("Назад", Global.save_settings)
 	back.pressed.connect(on_back)
 	return panel
@@ -87,6 +90,10 @@ static func settings(on_back: Callable) -> MenuPanel:
 
 static func _fullscreen_text() -> String:
 	return "Повний екран: %s" % ("увімк." if Global.fullscreen else "вимк.")
+
+
+static func _vibration_text() -> String:
+	return "Вібрація геймпада: %s" % ("увімк." if Global.vibration else "вимк.")
 
 
 static func make_label(text: String, font_size: int = 22, color: Color = Color.WHITE) -> Label:
