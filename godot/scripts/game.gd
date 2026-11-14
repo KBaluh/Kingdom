@@ -64,6 +64,11 @@ var _hp_fill: StyleBoxFlat
 var _hp_text: Label
 var _shield_bar: ProgressBar
 var _battle_label: Label
+var _hud: CanvasLayer
+## Covers whatever a screen wider or taller than the play field shows around it.
+var _frame: Array[ColorRect] = []
+## On-screen controls; null when not playing on a touch screen.
+var _touch: TouchControls
 
 var _overlay: CanvasLayer
 var _shade: ColorRect
@@ -82,8 +87,12 @@ func _ready() -> void:
 	_back = _add_layer()
 	_main = _add_layer()
 	_pop = _add_layer()
+	_build_frame()
 	_build_hud()
+	_build_touch_controls()
 	_build_overlay()
+	get_viewport().size_changed.connect(_fit_screen)
+	_fit_screen()
 	_start_level(clampi(Global.start_level, 0, LEVELS.size() - 1))
 
 
@@ -94,22 +103,40 @@ func _physics_process(_delta: float) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	var pause_pressed := event.is_action_pressed("pause")
+	# In the pause menu the gamepad's B button (ui_cancel) also goes back.
+	var back_pressed := _state == State.PAUSED and event.is_action_pressed("ui_cancel")
+	if (pause_pressed or back_pressed) and _go_back():
+		get_viewport().set_input_as_handled()
+
+
+func _notification(what: int) -> void:
+	if not is_node_ready():
+		return
+	match what:
+		# The back button on Android.
+		NOTIFICATION_WM_GO_BACK_REQUEST:
+			if not _go_back():
+				_to_menu()
+		# The player switched to another app or locked the phone.
+		NOTIFICATION_APPLICATION_PAUSED, NOTIFICATION_APPLICATION_FOCUS_OUT:
+			if _state == State.PLAYING and Global.is_touch():
+				_pause()
+
+
+## Pauses the game, or steps one screen back in the pause menu.
+## False on the end-of-level screens, where there is nothing to go back to.
+func _go_back() -> bool:
 	if _state == State.PLAYING:
-		if not pause_pressed:
-			return
 		_pause()
 	elif _state == State.PAUSED:
-		# In the pause menu the gamepad's B button (ui_cancel) also goes back.
-		if not pause_pressed and not event.is_action_pressed("ui_cancel"):
-			return
 		if _settings_panel.visible:
 			Global.save_settings()
 			_show_panel(_pause_panel)
 		else:
 			_resume()
 	else:
-		return
-	get_viewport().set_input_as_handled()
+		return false
+	return true
 
 
 # --- Entity layers (called by entities and spawners) ---
@@ -325,6 +352,8 @@ func _set_state(state: State) -> void:
 	var playing := state == State.PLAYING
 	get_tree().paused = not playing
 	_shade.visible = not playing
+	if _touch != null:
+		_touch.visible = playing
 	if not playing:
 		Global.set_rockets_flying(0)
 	if playing:
@@ -333,35 +362,87 @@ func _set_state(state: State) -> void:
 
 # --- HUD ---
 
-func _build_hud() -> void:
-	var hud := CanvasLayer.new()
-	add_child(hud)
+# --- Screen fit ---
 
-	_info = MenuPanel.make_label("", 16)
+func _build_frame() -> void:
+	var layer := CanvasLayer.new()
+	add_child(layer)
+	for i in 4:
+		var bar := ColorRect.new()
+		bar.color = Color(0, 0.02, 0.05)
+		layer.add_child(bar)
+		_frame.append(bar)
+
+
+func _build_touch_controls() -> void:
+	if not Global.is_touch():
+		return
+	var layer := CanvasLayer.new()
+	layer.layer = 3
+	add_child(layer)
+	_touch = TouchControls.new()
+	_touch.pause_pressed.connect(_go_back)
+	layer.add_child(_touch)
+
+
+## Centers the 4:3 play field on the screen and frames it. On a wide phone
+## the bars at the sides are where the thumbs and the touch controls go.
+func _fit_screen() -> void:
+	var screen := get_viewport().get_visible_rect().size
+	var field := Entity.SCREEN
+	var origin := ((screen - field) / 2).max(Vector2.ZERO).floor()
+	position = origin
+	_hud.offset = origin
+
+	var right := origin.x + field.x
+	var bottom := origin.y + field.y
+	var bars: Array[Rect2] = [
+		Rect2(0, 0, origin.x, screen.y),
+		Rect2(right, 0, screen.x - right, screen.y),
+		Rect2(origin.x, 0, field.x, origin.y),
+		Rect2(origin.x, bottom, field.x, screen.y - bottom),
+	]
+	for i in 4:
+		_frame[i].position = bars[i].position
+		_frame[i].size = bars[i].size.max(Vector2.ZERO)
+
+
+# --- HUD ---
+
+func _build_hud() -> void:
+	_hud = CanvasLayer.new()
+	_hud.layer = 2
+	add_child(_hud)
+	var hud := _hud
+	# A phone screen is small: the same text has to be bigger to be read.
+	var font_size := 20 if Global.is_touch() else 16
+
+	_info = MenuPanel.make_label("", font_size)
 	_info.position = Vector2(10, 6)
 	hud.add_child(_info)
 
 	var bars := HBoxContainer.new()
-	bars.position = Vector2(10, 34)
+	bars.position = Vector2(10, 14 + font_size * 1.25)
 	bars.add_theme_constant_override("separation", 8)
 	hud.add_child(bars)
 
-	bars.add_child(MenuPanel.make_label("Життя", 16))
+	bars.add_child(MenuPanel.make_label("Життя", font_size))
 	_hp_fill = MenuPanel.flat_box(Color(0.3, 0.9, 0.4), Color.TRANSPARENT, 5, 0)
 	_hp_bar = _make_bar(220, _hp_fill)
 	bars.add_child(_hp_bar)
-	_hp_text = MenuPanel.make_label("", 16)
+	_hp_text = MenuPanel.make_label("", font_size)
 	_hp_text.custom_minimum_size.x = 44
 	bars.add_child(_hp_text)
 
-	bars.add_child(MenuPanel.make_label("Щит", 16))
+	bars.add_child(MenuPanel.make_label("Щит", font_size))
 	_shield_bar = _make_bar(120, MenuPanel.flat_box(Color(0.45, 0.8, 1.0), Color.TRANSPARENT, 5, 0))
 	_shield_bar.max_value = Player.SHIELD_COOLDOWN
 	bars.add_child(_shield_bar)
 
 	_battle_label = MenuPanel.make_label("", 40)
-	_battle_label.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
-	_battle_label.offset_top = 170
+	# As wide as the play field, not the screen: the HUD layer moves with the field.
+	_battle_label.position = Vector2(0, 170)
+	_battle_label.size.x = Entity.SCREEN.x
 	hud.add_child(_battle_label)
 
 
@@ -392,6 +473,8 @@ func _update_hud() -> void:
 	else:
 		_hp_fill.bg_color = Color(0.3, 0.9, 0.4)
 	_shield_bar.value = player.shield_delay
+	if _touch != null:
+		_touch.shield_charge = float(player.shield_delay) / Player.SHIELD_COOLDOWN
 
 
 func _show_battle_text() -> void:
