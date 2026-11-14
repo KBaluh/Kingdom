@@ -7,6 +7,8 @@ extends Sprite2D
 const SCREEN := Vector2(1024, 768)
 const TEAM_PLAYER := 0
 const TEAM_ENEMY := 1
+## On nobody's side: a neutral bullet hits the player and the fish alike.
+const TEAM_NEUTRAL := 2
 
 ## The game.gd node this entity was added to.
 var level

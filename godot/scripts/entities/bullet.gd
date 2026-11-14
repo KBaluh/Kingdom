@@ -27,6 +27,9 @@ var leaves_trail := false
 var hitbox_shrink := 0.0
 var explodes_on_top_layer := false
 var heavy_boom := false
+## When above zero, the player loses this share of their full hit points
+## instead of `damage`.
+var player_hp_share := 0.0
 
 ## Fish a homing rocket steers at; once it is gone the rocket flies straight on.
 var target: Mob
@@ -66,15 +69,17 @@ static func homing(pos: Vector2, prey: Mob, rocket_team: int) -> Bullet:
 	return bullet
 
 
-## Floats up from the sea floor and blows up enemy fish.
+## Floats up from the sea floor and blows up whoever touches it first:
+## it sinks a fish outright and costs the player 30% of their hit points.
 static func sea_mine(pos: Vector2) -> Bullet:
 	var bullet := Bullet.new()
 	bullet.position = pos
 	bullet.texture = TEX_SEA_MINE
 	bullet.heading = Vector2.UP
 	bullet.speed = 3.0
-	bullet.team = TEAM_PLAYER
+	bullet.team = TEAM_NEUTRAL
 	bullet.damage = 40.0
+	bullet.player_hp_share = 0.3
 	bullet.hitbox_shrink = 10.0
 	bullet.heavy_boom = true
 	return bullet
@@ -135,6 +140,13 @@ func _seek() -> void:
 		return
 	heading = to_target.normalized()
 	rotation = heading.angle()
+
+
+## Hit points this bullet takes off `mob`.
+func damage_to(mob: Mob) -> float:
+	if player_hp_share > 0.0 and mob is Player:
+		return mob.max_hp * player_hp_share
+	return damage
 
 
 ## Called by the level when the bullet has damaged a mob.

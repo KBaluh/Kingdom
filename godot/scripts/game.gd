@@ -306,7 +306,7 @@ func _hit_mobs(bullet: Bullet) -> void:
 			continue
 		if mob.team == bullet.team or not mob.collides(bullet):
 			continue
-		mob.hurt(bullet.damage)
+		mob.hurt(bullet.damage_to(mob))
 		bullet.hit()
 		bullet.remove()
 		if not mob.alive and mob.counts_as_kill:
