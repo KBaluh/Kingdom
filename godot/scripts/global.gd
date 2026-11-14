@@ -232,6 +232,7 @@ func _register_actions() -> void:
 	_add_action("move_down", [KEY_S, KEY_DOWN], [JOY_BUTTON_DPAD_DOWN], [[JOY_AXIS_LEFT_Y, 1.0]])
 	_add_action("fire", [KEY_CTRL, KEY_J], [JOY_BUTTON_A], [[JOY_AXIS_TRIGGER_RIGHT, 1.0]])
 	_add_action("shield", [KEY_SPACE], [JOY_BUTTON_X, JOY_BUTTON_LEFT_SHOULDER])
+	_add_action("volley", [KEY_E, KEY_K], [JOY_BUTTON_Y])
 	_add_action("pause", [KEY_ESCAPE, KEY_P], [JOY_BUTTON_START])
 	# Menus: the built-in actions already navigate with the d-pad and stick,
 	# but have no gamepad buttons for confirm and back.

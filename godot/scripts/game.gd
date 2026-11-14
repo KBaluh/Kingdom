@@ -74,6 +74,7 @@ var _hp_bar: ProgressBar
 var _hp_fill: StyleBoxFlat
 var _hp_text: Label
 var _shield_bar: ProgressBar
+var _volley_bar: ProgressBar
 var _battle_label: Label
 var _boss_box: HBoxContainer
 var _boss_bar: ProgressBar
@@ -292,6 +293,19 @@ func _rockets_flying() -> int:
 	return count
 
 
+## Living enemy fish that are at least partly visible: the volley gun's targets.
+func enemies_on_screen() -> Array[Mob]:
+	var found: Array[Mob] = []
+	var screen := Rect2(Vector2.ZERO, Entity.SCREEN)
+	for node in _main.get_children():
+		var mob := node as Mob
+		if mob == null or mob.removed or not mob.alive:
+			continue
+		if mob.team == Entity.TEAM_ENEMY and mob.rect().intersects(screen):
+			found.append(mob)
+	return found
+
+
 ## Removes entities that swam off the screen; a fish that gets away is "missed".
 func _left_screen(entity: Entity) -> bool:
 	if entity is Player or entity is Shield or entity is Squid:
@@ -317,7 +331,7 @@ func _hit_mobs(bullet: Bullet) -> void:
 			continue
 		if mob.team == bullet.team or not mob.collides(bullet):
 			continue
-		mob.hurt(bullet.damage)
+		mob.hurt(bullet.damage_to(mob))
 		bullet.hit()
 		bullet.remove()
 		if not mob.alive and mob.counts_as_kill:
@@ -464,6 +478,11 @@ func _build_hud() -> void:
 	_shield_bar.max_value = Player.SHIELD_COOLDOWN
 	bars.add_child(_shield_bar)
 
+	bars.add_child(MenuPanel.make_label("Залп", font_size))
+	_volley_bar = _make_bar(120, MenuPanel.flat_box(Color(1.0, 0.6, 0.25), Color.TRANSPARENT, 5, 0))
+	_volley_bar.max_value = Player.VOLLEY_COOLDOWN
+	bars.add_child(_volley_bar)
+
 	_battle_label = MenuPanel.make_label("", 40)
 	# As wide as the play field, not the screen: the HUD layer moves with the field.
 	_battle_label.position = Vector2(0, 170)
@@ -512,7 +531,9 @@ func _update_hud() -> void:
 	else:
 		_hp_fill.bg_color = Color(0.3, 0.9, 0.4)
 	_shield_bar.value = player.shield_delay
+	_volley_bar.value = player.volley_delay
 	if _touch != null:
+		_touch.volley_charge = float(player.volley_delay) / Player.VOLLEY_COOLDOWN
 		_touch.shield_charge = float(player.shield_delay) / Player.SHIELD_COOLDOWN
 
 

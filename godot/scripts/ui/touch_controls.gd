@@ -1,15 +1,16 @@
 class_name TouchControls
 extends Control
 ## On-screen controls for phones: a floating stick on the left half of the
-## screen, rocket and shield buttons on the right, pause in the top corner.
+## screen, rocket, volley and shield buttons on the right, pause in the top corner.
 ## They press the same input actions as the keyboard and the gamepad.
 
 signal pause_pressed
 
-enum Role { STICK, FIRE, SHIELD }
+enum Role { STICK, FIRE, SHIELD, VOLLEY }
 
 const ACTIONS: Array[StringName] = [
 	&"move_left", &"move_right", &"move_up", &"move_down", &"fire", &"shield",
+	&"volley",
 ]
 const STICK_RADIUS := 95.0
 const KNOB_RADIUS := 42.0
@@ -17,6 +18,7 @@ const KNOB_RADIUS := 42.0
 const STICK_THRESHOLD := 0.3
 const FIRE_RADIUS := 84.0
 const SHIELD_RADIUS := 62.0
+const VOLLEY_RADIUS := 62.0
 const PAUSE_RADIUS := 34.0
 ## Fingers are imprecise: buttons react a little outside their circle too.
 const HIT_SLACK := 1.25
@@ -29,6 +31,13 @@ var shield_charge := 1.0:
 	set(value):
 		if not is_equal_approx(value, shield_charge):
 			shield_charge = value
+			queue_redraw()
+
+## 0..1, how far the volley gun has reloaded; a ring around its button too.
+var volley_charge := 1.0:
+	set(value):
+		if not is_equal_approx(value, volley_charge):
+			volley_charge = value
 			queue_redraw()
 
 ## Finger index -> Role.
@@ -81,6 +90,9 @@ func _touch_down(index: int, at: Vector2) -> void:
 	elif at.distance_to(_shield_center()) <= SHIELD_RADIUS * HIT_SLACK:
 		_fingers[index] = Role.SHIELD
 		Input.action_press(&"shield")
+	elif at.distance_to(_volley_center()) <= VOLLEY_RADIUS * HIT_SLACK:
+		_fingers[index] = Role.VOLLEY
+		Input.action_press(&"volley")
 	elif at.x < size.x * 0.5 and not _fingers.values().has(Role.STICK):
 		_fingers[index] = Role.STICK
 		_stick_origin = at
@@ -96,6 +108,8 @@ func _touch_up(index: int) -> void:
 			Input.action_release(&"fire")
 		Role.SHIELD:
 			Input.action_release(&"shield")
+		Role.VOLLEY:
+			Input.action_release(&"volley")
 		Role.STICK:
 			_stick_offset = Vector2.ZERO
 			_apply_stick()
@@ -139,6 +153,10 @@ func _shield_center() -> Vector2:
 	return size - Vector2(125, 310)
 
 
+func _volley_center() -> Vector2:
+	return size - Vector2(310, 140)
+
+
 func _pause_center() -> Vector2:
 	return Vector2(size.x - 60, 56)
 
@@ -163,6 +181,17 @@ func _draw() -> void:
 	_draw_icon(SHIELD_ICON, shield, SHIELD_RADIUS * 1.3, 1.0 if shield_charge >= 1.0 else 0.35)
 	draw_arc(shield, SHIELD_RADIUS, -PI / 2, -PI / 2 + TAU * shield_charge, 48,
 			Color(0.45, 0.8, 1.0, 0.95), 5.0, true)
+
+	var volley := _volley_center()
+	var volley_alpha := 1.0 if volley_charge >= 1.0 else 0.35
+	_draw_disc(volley, VOLLEY_RADIUS, roles.has(Role.VOLLEY), 0.35)
+	# Three rockets fanning out: one for every fish.
+	for turn: float in [-0.5, 0.0, 0.5]:
+		draw_set_transform(volley, turn)
+		_draw_icon(ROCKET_ICON, Vector2(12, 0), VOLLEY_RADIUS * 0.85, volley_alpha)
+	draw_set_transform(Vector2.ZERO)
+	draw_arc(volley, VOLLEY_RADIUS, -PI / 2, -PI / 2 + TAU * volley_charge, 48,
+			Color(1.0, 0.6, 0.25, 0.95), 5.0, true)
 
 	var pause := _pause_center()
 	_draw_disc(pause, PAUSE_RADIUS, false)
