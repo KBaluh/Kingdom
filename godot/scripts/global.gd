@@ -36,10 +36,17 @@ var _flight_volume := 0.0
 var _flight_target := 0.0
 ## Gamepad the player touched last, or -1 while they are on the keyboard.
 var _active_pad := -1
+## True on phones and tablets: on-screen controls, no window to resize.
+## "--touch" after "--" on the command line tries it out on a desktop.
+var _touch := false
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	_touch = OS.has_feature("mobile") or OS.has_feature("web_android") or OS.has_feature("web_ios")
+	if OS.get_cmdline_user_args().has("--touch"):
+		_touch = true
+		Input.emulate_touch_from_mouse = true
 	_register_actions()
 	_load_settings()
 	apply_settings()
@@ -65,7 +72,7 @@ func _process(delta: float) -> void:
 
 
 func _input(event: InputEvent) -> void:
-	if event is InputEventKey:
+	if event is InputEventKey or event is InputEventScreenTouch:
 		_active_pad = -1
 	elif event is InputEventJoypadButton:
 		_active_pad = event.device
@@ -89,11 +96,16 @@ func set_rockets_flying(count: int) -> void:
 		_flight_target = minf(FLIGHT_BASE_VOLUME + FLIGHT_VOLUME_PER_ROCKET * (count - 1), FLIGHT_MAX_VOLUME)
 
 
-## Shakes the gamepad, if the player is using one and vibration is on.
+## Shakes the gamepad the player is using, or the phone itself when they
+## play on the touch screen, if vibration is on.
 ## `weak` and `strong` are motor strengths from 0 to 1.
 func rumble(weak: float, strong: float, seconds: float) -> void:
-	if vibration and _active_pad >= 0:
+	if not vibration:
+		return
+	if _active_pad >= 0:
 		Input.start_joy_vibration(_active_pad, weak, strong, seconds)
+	elif _touch:
+		Input.vibrate_handheld(roundi(seconds * 1000.0), maxf(weak, strong))
 
 
 func toggle_vibration() -> void:
@@ -142,6 +154,9 @@ func apply_settings() -> void:
 		_music.volume_db = MUSIC_FULL_DB + linear_to_db(maxf(music_volume, 0.001))
 		_music.stream_paused = music_volume <= 0.001
 
+	# A phone is always fullscreen.
+	if OS.has_feature("mobile"):
+		return
 	var mode := DisplayServer.WINDOW_MODE_FULLSCREEN if fullscreen else DisplayServer.WINDOW_MODE_WINDOWED
 	if DisplayServer.window_get_mode() != mode:
 		DisplayServer.window_set_mode(mode)
@@ -222,6 +237,11 @@ func _register_actions() -> void:
 	# but have no gamepad buttons for confirm and back.
 	_add_action("ui_accept", [], [JOY_BUTTON_A])
 	_add_action("ui_cancel", [], [JOY_BUTTON_B])
+
+
+## True when the game is played on a touch screen.
+func is_touch() -> bool:
+	return _touch
 
 
 ## True when at least one gamepad is plugged in.

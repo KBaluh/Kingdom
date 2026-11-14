@@ -4,6 +4,9 @@ extends Control
 ## Shared by the main menu, the pause menu and the end-of-game screens.
 
 const BUTTON_SIZE := Vector2(340, 54)
+## Taller buttons and sliders where they are pressed with a finger.
+const TOUCH_BUTTON_HEIGHT := 70.0
+const TOUCH_SLIDER_HEIGHT := 48.0
 
 var box: VBoxContainer
 var _first_focus: Control
@@ -46,6 +49,8 @@ func add_button(text: String, action: Callable) -> Button:
 	var button := Button.new()
 	button.text = text
 	button.custom_minimum_size = BUTTON_SIZE
+	if Global.is_touch():
+		button.custom_minimum_size.y = TOUCH_BUTTON_HEIGHT
 	button.add_theme_font_size_override("font_size", 22)
 	button.add_theme_stylebox_override("normal",
 			flat_box(Color(0.06, 0.27, 0.42, 0.95), Color(0.35, 0.75, 0.95, 0.5)))
@@ -70,7 +75,7 @@ func add_slider(title: String, value: float, on_change: Callable) -> HSlider:
 	slider.max_value = 1.0
 	slider.step = 0.05
 	slider.value = value
-	slider.custom_minimum_size = Vector2(BUTTON_SIZE.x, 28)
+	slider.custom_minimum_size = Vector2(BUTTON_SIZE.x, TOUCH_SLIDER_HEIGHT if Global.is_touch() else 28.0)
 	slider.value_changed.connect(on_change)
 	box.add_child(slider)
 	return slider
@@ -84,8 +89,9 @@ static func settings(on_back: Callable) -> MenuPanel:
 	volume.drag_ended.connect(Global.preview_volume)
 	panel.add_slider("Музика", Global.music_volume, Global.set_music_volume)
 
-	var fullscreen := panel.add_button(_fullscreen_text(), Global.toggle_fullscreen)
-	fullscreen.pressed.connect(func() -> void: fullscreen.text = _fullscreen_text())
+	if not Global.is_touch():
+		var fullscreen := panel.add_button(_fullscreen_text(), Global.toggle_fullscreen)
+		fullscreen.pressed.connect(func() -> void: fullscreen.text = _fullscreen_text())
 
 	var vibration := panel.add_button(_vibration_text(), Global.toggle_vibration)
 	vibration.pressed.connect(func() -> void: vibration.text = _vibration_text())
@@ -100,7 +106,8 @@ static func _fullscreen_text() -> String:
 
 
 static func _vibration_text() -> String:
-	return "Вібрація геймпада: %s" % ("увімк." if Global.vibration else "вимк.")
+	var title := "Вібрація" if Global.is_touch() else "Вібрація геймпада"
+	return "%s: %s" % [title, "увімк." if Global.vibration else "вимк."]
 
 
 static func make_label(text: String, font_size: int = 22, color: Color = Color.WHITE) -> Label:
