@@ -85,11 +85,11 @@ func _notification(what: int) -> void:
 ## or keyboard ones.
 func _update_hint(_device: int = 0, _connected: bool = false) -> void:
 	if Global.has_gamepad():
-		_hint.text = "Стік / хрестовина — рух     A / RT — ракета     X / LB — щит     Start — пауза"
+		_hint.text = "Стік / хрестовина — рух     A / RT — ракета     Y — залп     X / LB — щит     Start — пауза"
 	elif Global.is_touch():
-		_hint.text = "Ліва половина екрана — рух     кнопки праворуч — ракета і щит"
+		_hint.text = "Ліва половина екрана — рух     кнопки праворуч — ракета, залп і щит"
 	else:
-		_hint.text = "WASD / стрілки — рух     Ctrl — ракета     Пробіл — щит     Esc — пауза"
+		_hint.text = "WASD / стрілки — рух     Ctrl — ракета     E — залп     Пробіл — щит     Esc — пауза"
 
 
 func _show(panel_name: String) -> void:
