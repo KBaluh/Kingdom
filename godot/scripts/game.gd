@@ -35,9 +35,20 @@ const LEVELS := [
 			["sea_mine", 200], ["top_fish_mine", 900],
 		],
 	},
+	# The boss fight: no battles and no fish to miss, only the squid.
+	{
+		"background": preload("res://assets/images/background3.jpg"),
+		"background_tint": Color(0.5, 0.55, 0.8),
+		"max_hp": 200.0,
+		"first_kills": 1,
+		"boss": true,
+		"spawners": [["bubble", 20], ["medicine", 650]],
+	},
 ]
 
 var player: Player
+## The squid on the boss level, null on the others.
+var boss: Squid
 var level_index := 0
 var battle := 1
 var kills := 0
@@ -64,6 +75,8 @@ var _hp_fill: StyleBoxFlat
 var _hp_text: Label
 var _shield_bar: ProgressBar
 var _battle_label: Label
+var _boss_box: HBoxContainer
+var _boss_bar: ProgressBar
 var _hud: CanvasLayer
 ## Covers whatever a screen wider or taller than the play field shows around it.
 var _frame: Array[ColorRect] = []
@@ -176,6 +189,7 @@ func _start_level(index: int) -> void:
 
 	var def: Dictionary = LEVELS[index]
 	_background.texture = def["background"]
+	_background.modulate = def.get("background_tint", Color.WHITE)
 	battle = 1
 	kills = 0
 	skipped = 0
@@ -188,6 +202,12 @@ func _start_level(index: int) -> void:
 
 	player = Player.new(Vector2(100, 200), def["max_hp"])
 	add_main(player)
+
+	boss = null
+	if def.get("boss", false):
+		boss = Squid.new()
+		add_main(boss)
+	_boss_box.visible = boss != null
 
 	_show_battle_text()
 	_set_state(State.PLAYING)
@@ -204,7 +224,12 @@ func _tick() -> void:
 		if _battle_text_ticks == 0:
 			_battle_label.text = ""
 
-	if kills >= kills_needed:
+	if boss != null:
+		if boss.defeated:
+			score += Squid.SCORE
+			_level_done()
+			return
+	elif kills >= kills_needed:
 		_battle_won()
 		if battle > MAX_BATTLES:
 			_level_done()
@@ -269,7 +294,7 @@ func _rockets_flying() -> int:
 
 ## Removes entities that swam off the screen; a fish that gets away is "missed".
 func _left_screen(entity: Entity) -> bool:
-	if entity is Player or entity is Shield:
+	if entity is Player or entity is Shield or entity is Squid:
 		return false
 	# The sprite, not the hitbox: a sea mine's hitbox is smaller than its
 	# sprite, so at its spawn point on the bottom edge it is already "below".
@@ -445,6 +470,16 @@ func _build_hud() -> void:
 	_battle_label.size.x = Entity.SCREEN.x
 	hud.add_child(_battle_label)
 
+	# The boss's health, along the bottom of the play field.
+	_boss_box = HBoxContainer.new()
+	_boss_box.position = Vector2(170, Entity.SCREEN.y - 34)
+	_boss_box.add_theme_constant_override("separation", 8)
+	hud.add_child(_boss_box)
+	_boss_box.add_child(MenuPanel.make_label("Кальмар", font_size))
+	_boss_bar = _make_bar(580, MenuPanel.flat_box(Color(0.85, 0.3, 0.5), Color.TRANSPARENT, 5, 0))
+	_boss_bar.max_value = Squid.HP
+	_boss_box.add_child(_boss_bar)
+
 
 func _make_bar(width: float, fill: StyleBoxFlat) -> ProgressBar:
 	var bar := ProgressBar.new()
@@ -458,10 +493,14 @@ func _make_bar(width: float, fill: StyleBoxFlat) -> ProgressBar:
 
 
 func _update_hud() -> void:
-	_info.text = "Рівень %d    Бій %d/%d    Пропущено: %d/%d    Знищено: %d/%d    Рахунок: %d" % [
-		level_index + 1, mini(battle, MAX_BATTLES), MAX_BATTLES,
-		skipped, MAX_SKIPPED, kills, kills_needed, score,
-	]
+	if boss != null:
+		_info.text = "Рівень %d    Бос    Рахунок: %d" % [level_index + 1, score]
+		_boss_bar.value = boss.hp
+	else:
+		_info.text = "Рівень %d    Бій %d/%d    Пропущено: %d/%d    Знищено: %d/%d    Рахунок: %d" % [
+			level_index + 1, mini(battle, MAX_BATTLES), MAX_BATTLES,
+			skipped, MAX_SKIPPED, kills, kills_needed, score,
+		]
 	_hp_bar.max_value = player.max_hp
 	_hp_bar.value = player.hp
 	_hp_text.text = str(int(player.hp))
@@ -479,7 +518,10 @@ func _update_hud() -> void:
 
 func _show_battle_text() -> void:
 	_battle_text_ticks = BATTLE_TEXT_TICKS
-	_battle_label.text = "Рівень %d, бій %d" % [level_index + 1, battle]
+	if boss != null:
+		_battle_label.text = "Рівень %d: бос!" % (level_index + 1)
+	else:
+		_battle_label.text = "Рівень %d, бій %d" % [level_index + 1, battle]
 
 
 # --- Pause menu and end screens ---
