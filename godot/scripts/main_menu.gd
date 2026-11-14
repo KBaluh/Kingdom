@@ -3,7 +3,9 @@ extends Control
 
 const BACKGROUND := preload("res://assets/images/background.jpg")
 const BUBBLE := preload("res://assets/images/bubble_middle.png")
-const LEVEL_COUNT := 3
+const LEVEL_COUNT := 4
+## The last level is the boss fight.
+const BOSS_LEVEL := LEVEL_COUNT - 1
 
 var _main: MenuPanel
 var _levels: MenuPanel
@@ -51,7 +53,10 @@ func _ready() -> void:
 
 	_levels = MenuPanel.new("Вибір рівня")
 	for i in LEVEL_COUNT:
-		_levels.add_button("Рівень %d" % (i + 1), _start.bind(i))
+		var title := "Рівень %d" % (i + 1)
+		if i == BOSS_LEVEL:
+			title += " — бос"
+		_levels.add_button(title, _start.bind(i))
 	_levels.add_button("Назад", _show.bind("main"))
 
 	_settings = MenuPanel.settings(_show.bind("main"))
